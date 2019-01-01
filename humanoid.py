@@ -781,7 +781,7 @@ class Humanoid:
         #algorithms.print_log_report("DEBUG","Character updated in {0} secs".format(time.time()-time1))
 
     def generate_character(self,random_value,prv_face,prv_body,prv_mass,prv_tone,prv_height,prv_phenotype,set_tone_and_mass,body_mass,body_tone,prv_fantasy):
-        algorithms.print_log_report("INFO","Generating character...")
+        algorithms.print_log_report("INFO","正在生成角色......")
 
         all_props = [x for x in self.character_data.keys()]
         props_to_process = all_props.copy()

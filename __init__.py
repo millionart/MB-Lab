@@ -306,14 +306,14 @@ def init_categories_props(humanoid_instance):
     bpy.types.Scene.morphingCategory = bpy.props.EnumProperty(
         items=categories_enum,
         update = modifiers_update,
-        name="Morphing categories")
+        name="变形类别")
 
 def init_restposes_props(humanoid_instance):
     if humanoid_instance.exists_rest_poses_database():
         restpose_items = algorithms.generate_items_list(humanoid_instance.restposes_path)
         bpy.types.Object.rest_pose = bpy.props.EnumProperty(
             items=restpose_items,
-            name="Rest pose",
+            name="静止姿势",
             default=restpose_items[0][0],
             update=restpose_update)
 
@@ -324,7 +324,7 @@ def init_maleposes_props():
             malepose_items = algorithms.generate_items_list(mblab_retarget.maleposes_path)
             bpy.types.Object.male_pose = bpy.props.EnumProperty(
                 items=malepose_items,
-                name="Male pose",
+                name="男性姿势",
                 default=malepose_items[0][0],
                 update=malepose_update)
 
@@ -335,7 +335,7 @@ def init_femaleposes_props():
             femalepose_items = algorithms.generate_items_list(mblab_retarget.femaleposes_path)
             bpy.types.Object.female_pose = bpy.props.EnumProperty(
                 items=femalepose_items,
-                name="Female pose",
+                name="女性姿势",
                 default=femalepose_items[0][0],
                 update=femalepose_update)
 
@@ -358,7 +358,7 @@ def init_presets_props(humanoid_instance):
         preset_items = algorithms.generate_items_list(humanoid_instance.presets_path)
         bpy.types.Object.preset = bpy.props.EnumProperty(
             items=preset_items,
-            name="Types",
+            name="类型",
             update=preset_update)
 
 def init_ethnic_props(humanoid_instance):
@@ -366,7 +366,7 @@ def init_ethnic_props(humanoid_instance):
         ethnic_items = algorithms.generate_items_list(humanoid_instance.phenotypes_path)
         bpy.types.Object.ethnic = bpy.props.EnumProperty(
             items=ethnic_items,
-            name="Phenotype",
+            name="遗传表型",
             update=ethnic_update)
 
 def init_metaparameters_props(humanoid_instance):
@@ -441,7 +441,7 @@ def get_proxy_items(self, context):
             if algorithms.get_template_model(obj) == None:
                 items.append((obj.name,obj.name,obj.name))
     if len(items) == 0:
-        items = [("NO_PROXY_FOUND","No proxy found","No proxy found")]
+        items = [("NO_PROXY_FOUND","找不到代理","找不到代理")]
     return items
 
 
@@ -460,8 +460,8 @@ def load_proxy_item(self, context):
 #init_expression_props()
 
 bpy.types.Scene.mblab_proxy_library = bpy.props.StringProperty(
-            name = "Library folder",
-            description = "Folder with assets blend files",
+            name = "库文件夹",
+            description = "资源混合文件的文件夹",
             default = "",
             maxlen = 1024,
             update = update_proxy_library,
@@ -469,16 +469,16 @@ bpy.types.Scene.mblab_proxy_library = bpy.props.StringProperty(
 
 bpy.types.Scene.mblab_fitref_name = bpy.props.EnumProperty(
         items=get_character_items,
-        name="Character")
+        name="角色")
 
 bpy.types.Scene.mblab_proxy_name = bpy.props.EnumProperty(
         items=get_proxy_items,
-        name="Proxy")
+        name="代理")
 
 
 bpy.types.Scene.mblab_final_prefix = bpy.props.StringProperty(
-        name="Prefix",
-        description="The prefix of names for finalized model, skeleton and materials. If none, it will be generated automatically" ,
+        name="前缀",
+        description="最终模型，骨架和材质的名称前缀。 如果没有，它将自动生成" ,
         default="")
 
 bpy.types.Scene.mblab_rot_offset_0 = bpy.props.FloatProperty(
@@ -512,46 +512,46 @@ bpy.types.Scene.mblab_proxy_offset = bpy.props.FloatProperty(
         default=0)
 
 bpy.types.Scene.mblab_proxy_threshold = bpy.props.FloatProperty(
-        name="Influence",
+        name="影响",
         min = 0,
         max = 1000,
         default=20)
 
 bpy.types.Scene.mblab_use_ik = bpy.props.BoolProperty(
-    name="Use Inverse Kinematic",
+    name="使用反向动力学",
     default = False,
-    description="Use inverse kinematic armature")
+    description="使用反向动力学骨架")
 
 bpy.types.Scene.mblab_use_muscle = bpy.props.BoolProperty(
-    name="Use basic muscles",
+    name="使用基本肌肉",
     default = False,
-    description="Use basic muscle armature")
+    description="使用基本肌肉骨架")
 
 bpy.types.Scene.mblab_remove_all_modifiers = bpy.props.BoolProperty(
-    name="Remove modifiers",
+    name="移除修改器",
     default = False,
-    description="If checked, all the modifiers will be removed, except the armature one (displacement, subdivision, corrective smooth, etc) will be removed from the finalized character)")
+    description="如果选中，将删除所有修改器，除了将从最终角色中移除骨架（位移，细分，矫正平滑等）之外）")
 
 bpy.types.Scene.mblab_use_cycles = bpy.props.BoolProperty(
-    name="Use Cycles materials (needed for skin shaders)",
+    name="使用 Cycles 材质（皮肤着色器需要）",
     default = True,
     update = set_cycles_render_engine,
-    description="This is needed in order to use the skin editor and shaders (highly recommended)")
+    description="为了使用皮肤编辑器和着色器，需要这样做（强烈推荐）")
 
 bpy.types.Scene.mblab_use_eevee = bpy.props.BoolProperty(
-    name="Use EEVEE materials (needed for skin shaders)",
+    name="使用 EEVEE 材料（Blender 2.8 皮肤着色器需要）",
     default = False,
     update = set_eevee_render_engine,
-    description="This is needed in order to use the skin editor and shaders")
+    description="这是使用皮肤编辑器和着色器所必需的")
 
 bpy.types.Scene.mblab_use_lamps = bpy.props.BoolProperty(
-    name="Use portrait studio lights (recommended)",
+    name="使用肖像工作室光源（推荐）",
     default = True,
-    description="Add a set of lights optimized for portrait. Useful during the design of skin (recommended)")
+    description="添加一组针对肖像优化的光源。 在皮肤设计中有用（推荐）")
 
 bpy.types.Scene.mblab_show_measures = bpy.props.BoolProperty(
-    name="Body measures",
-    description="Show measures controls",
+    name="身体尺寸",
+    description="显示尺寸控件",
     update = modifiers_update)
 
 bpy.types.Scene.mblab_measure_filter = bpy.props.StringProperty(
@@ -565,7 +565,7 @@ bpy.types.Scene.mblab_expression_filter = bpy.props.StringProperty(
     description="Filter the expressions to show")
 
 bpy.types.Scene.mblab_mix_characters = bpy.props.BoolProperty(
-    name="Mix with current",
+    name="与当前的混合",
     description="Mix templates")
 
 bpy.types.Scene.mblab_template_name = bpy.props.EnumProperty(
@@ -581,103 +581,103 @@ bpy.types.Scene.mblab_character_name = bpy.props.EnumProperty(
 bpy.types.Scene.mblab_assets_models = bpy.props.EnumProperty(
     items=get_proxy_items_from_library,
     update=load_proxy_item,
-    name="Assets model")
+    name="资源模型")   
 
 
 bpy.types.Scene.mblab_transfer_proxy_weights = bpy.props.BoolProperty(
-    name="Transfer weights from body to proxy (replace existing)",
-    description="If the proxy has already rigging weights, they will be replaced with the weights projected from the character body",
+    name="从身体到代理转移权重（替换现有）",
+    description="如果代理已经装配了权重，它们将被替换为从角色主体投射的权重",
     default = True)
 
 bpy.types.Scene.mblab_save_images_and_backup = bpy.props.BoolProperty(
-    name="Save images and backup character",
-    description="Save all images from the skin shader and backup the character in json format",
+    name="保存图像并备份角色",
+    description="保存皮肤着色器中的所有图像，并以 json 格式备份角色",
     default = True)
 
 bpy.types.Object.mblab_use_inch = bpy.props.BoolProperty(
-    name="Inch",
+    name="英寸",
     update = measure_units_update,
-    description="Use inch instead of cm")
+    description="使用英寸而不是厘米")
 
 bpy.types.Scene.mblab_export_proportions = bpy.props.BoolProperty(
-    name="Include proportions",
-    description="Include proportions in the exported character file")
+    name="包含比例",
+    description="在导出的角色文件中包含比例")
 
 bpy.types.Scene.mblab_export_materials = bpy.props.BoolProperty(
-    name="Include materials",
+    name="包含材质",
     default = True,
-    description="Include materials in the exported character file")
+    description="在导出的角色文件中包含材料")
 
 bpy.types.Scene.mblab_show_texture_load_save = bpy.props.BoolProperty(
-    name="Import-export images",
-    description="Show controls to import and export texture images")
+    name="导入导出图像",
+    description="显示控件以导入和导出纹理图像")
 
 bpy.types.Scene.mblab_add_mask_group = bpy.props.BoolProperty(
-    name="Add mask vertgroup",
-    description="Create a new vertgroup and use it as mask the body under proxy.",
+    name="添加蒙版顶点组",
+    description="创建一个新的顶点组并使用它作为代理下的身体蒙版。",
     default=False)
 
 bpy.types.Scene.mblab_preserve_mass = bpy.props.BoolProperty(
-    name="Mass",
-    description="Preserve the current relative mass percentage")
+    name="脂肪",
+    description="保持当前的相对脂肪百分比")
 
 bpy.types.Scene.mblab_preserve_height = bpy.props.BoolProperty(
-    name="Height",
-    description="Preserve the current character height")
+    name="身高",
+    description="保持当前角色身高")
 
 bpy.types.Scene.mblab_preserve_tone = bpy.props.BoolProperty(
-    name="Tone",
-    description="Preserve the current relative tone percentage")
+    name="肌肉",
+    description="保留当前的相对肌肉百分比")
 
 bpy.types.Scene.mblab_preserve_fantasy = bpy.props.BoolProperty(
-    name="Fantasy",
-    description="Preserve the current amount of fantasy morphs. For example, starting from a character with zero fantasy elements, all the generated characters will have zero fantasy elements")
+    name="幻想",
+    description="保留当前的幻想变形量。 例如，从具有零幻想元素的角色开始，所有生成的角色将具有零幻想元素")
 
 bpy.types.Scene.mblab_preserve_body = bpy.props.BoolProperty(
-    name="Body",
-    description="Preserve the body features")
+    name="身体",
+    description="保留身体特征")
 
 bpy.types.Scene.mblab_preserve_face = bpy.props.BoolProperty(
-    name="Face",
-    description="Preserve the face features, but not the head shape")
+    name="脸部",
+    description="保留脸部特征，但不保留头部形状")
 
 bpy.types.Scene.mblab_preserve_phenotype = bpy.props.BoolProperty(
-    name="Phenotype",
-    description="Preserve characteristic traits, like people that are members of the same family")
+    name="遗传表型",
+    description="保留性状特征，例如属于同一家庭的人")
 
 bpy.types.Scene.mblab_set_tone_and_mass = bpy.props.BoolProperty(
-    name="Use fixed tone and mass values",
-    description="Enable the setting of fixed values for mass and tone using a slider UI")
+    name="使用修正过的肌肉和脂肪值",
+    description=" 为脂肪和肌肉启用 使用滑动条 UI 修正过 的设置")
 
 bpy.types.Scene.mblab_body_mass = bpy.props.FloatProperty(
-    name="Body mass",
+    name="身体脂肪",
     min=0.0,
     max=1.0,
     default = 0.5,
-    description="Preserve the current character body mass")
+    description="保留当前的角色体重")
 
 bpy.types.Scene.mblab_body_tone = bpy.props.FloatProperty(
-    name="Body tone",
+    name="身体肌肉",
     min=0.0,
     max=1.0,
     default = 0.5,
-    description="Preserve the current character body mass")
+    description="保留当前的角色体重")
 
 bpy.types.Scene.mblab_random_engine = bpy.props.EnumProperty(
-                items = [("LI", "Light", "Little variations from the standard"),
-                        ("RE", "Realistic", "Realistic characters"),
-                        ("NO", "Noticeable", "Very characterized people"),
-                        ("CA", "Caricature", "Engine for caricatures"),
-                        ("EX", "Extreme", "Extreme characters")],
-                name = "Engine",
+                items = [("LI", "轻度", "标准差异不大"),
+                        ("RE", "逼真", "逼真的人物"),
+                        ("NO", "特征明显", "很有特色的人"),
+                        ("CA", "讽刺画", "讽刺漫画引擎"),
+                        ("EX", "极端", "极端的角色")],
+                name = "引擎",
                 default = "LI")
 
 
 class ButtonParametersOff(bpy.types.Operator):
 
-    bl_label = 'Body Measures'
+    bl_label = '身体，面部和尺寸参数'
     bl_idname = 'mbast.button_parameters_off'
-    bl_description = 'Close details panel'
+    bl_description = '关闭细节面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -687,9 +687,9 @@ class ButtonParametersOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonParametersOn(bpy.types.Operator):
-    bl_label = 'Body Measures'
+    bl_label = '身体，面部和尺寸参数'
     bl_idname = 'mbast.button_parameters_on'
-    bl_description = 'Open details panel (head,nose,hands, measures etc...)'
+    bl_description = '打开细节面板（头，鼻子，手，尺寸等......）'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -700,9 +700,9 @@ class ButtonParametersOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonUtilitiesOff(bpy.types.Operator):
-    bl_label = 'UTILITIES'
+    bl_label = '辅助工具'
     bl_idname = 'mbast.button_utilities_off'
-    bl_description = 'Close utilities panel'
+    bl_description = '关闭辅助工具面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -712,9 +712,9 @@ class ButtonUtilitiesOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonUtilitiesOn(bpy.types.Operator):
-    bl_label = 'UTILITIES'
+    bl_label = '辅助工具'
     bl_idname = 'mbast.button_utilities_on'
-    bl_description = 'Open utilities panel'
+    bl_description = '打开辅助工具面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -724,9 +724,9 @@ class ButtonUtilitiesOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonExpressionsOff(bpy.types.Operator):
-    bl_label = 'FACE EXPRESSIONS'
+    bl_label = '面部表情'
     bl_idname = 'mbast.button_expressions_off'
-    bl_description = 'Close expressions panel'
+    bl_description = '关闭表情面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -736,9 +736,9 @@ class ButtonExpressionsOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonExpressionOn(bpy.types.Operator):
-    bl_label = 'FACE EXPRESSIONS'
+    bl_label = '面部表情'
     bl_idname = 'mbast.button_expressions_on'
-    bl_description = 'Open expressions panel'
+    bl_description = '打开表情面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -750,9 +750,9 @@ class ButtonExpressionOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonRandomOff(bpy.types.Operator):
-    bl_label = 'Random Generator'
+    bl_label = '随机生成器'
     bl_idname = 'mbast.button_random_off'
-    bl_description = 'Close random generator panel'
+    bl_description = '关闭随机生成器面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -762,9 +762,9 @@ class ButtonRandomOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonRandomOn(bpy.types.Operator):
-    bl_label = 'Random Generator'
+    bl_label = '随机生成器'
     bl_idname = 'mbast.button_random_on'
-    bl_description = 'Open random generator panel'
+    bl_description = '打开随机生成器面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -777,9 +777,9 @@ class ButtonRandomOn(bpy.types.Operator):
 
 class ButtonAutomodellingOff(bpy.types.Operator):
 
-    bl_label = 'Automodelling Tools'
+    bl_label = '自动建模工具'
     bl_idname = 'mbast.button_automodelling_off'
-    bl_description = 'Close automodelling panel'
+    bl_description = '关闭自动建模面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -789,9 +789,9 @@ class ButtonAutomodellingOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonAutomodellingOn(bpy.types.Operator):
-    bl_label = 'Automodelling Tools'
+    bl_label = '自动建模工具'
     bl_idname = 'mbast.button_automodelling_on'
-    bl_description = 'Open automodelling panel'
+    bl_description = '打开自动建模面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -801,9 +801,9 @@ class ButtonAutomodellingOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtoRestPoseOff(bpy.types.Operator):
-    bl_label = 'Rest Pose'
+    bl_label = '静止姿势'
     bl_idname = 'mbast.button_rest_pose_off'
-    bl_description = 'Close rest pose panel'
+    bl_description = '关闭静止姿势面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -813,9 +813,9 @@ class ButtoRestPoseOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonRestPoseOn(bpy.types.Operator):
-    bl_label = 'Rest Pose'
+    bl_label = '静止姿势'
     bl_idname = 'mbast.button_rest_pose_on'
-    bl_description = 'Open rest pose panel'
+    bl_description = '打开静止姿势面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -825,9 +825,9 @@ class ButtonRestPoseOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtoPoseOff(bpy.types.Operator):
-    bl_label = 'POSE AND ANIMATION'
+    bl_label = '姿势和动画'
     bl_idname = 'mbast.button_pose_off'
-    bl_description = 'Close pose panel'
+    bl_description = '关闭姿势面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -837,9 +837,9 @@ class ButtoPoseOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonAssetsOn(bpy.types.Operator):
-    bl_label = 'ASSETS LIBRARY'
+    bl_label = '资源库'
     bl_idname = 'mbast.button_assets_on'
-    bl_description = 'Open assets panel'
+    bl_description = '打开资源面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -847,11 +847,11 @@ class ButtonAssetsOn(bpy.types.Operator):
         global gui_active_panel_fin
         gui_active_panel_fin = 'assets'
         return {'FINISHED'}
-
+        
 class ButtoAssetsOff(bpy.types.Operator):
-    bl_label = 'ASSETS LIBRARY'
+    bl_label = '资源库'
     bl_idname = 'mbast.button_assets_off'
-    bl_description = 'Close assets panel'
+    bl_description = '关闭资源面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -861,9 +861,9 @@ class ButtoAssetsOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonPoseOn(bpy.types.Operator):
-    bl_label = 'POSE AND ANIMATION'
+    bl_label = '姿势和动画'
     bl_idname = 'mbast.button_pose_on'
-    bl_description = 'Open pose panel'
+    bl_description = '打开姿势面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -876,9 +876,9 @@ class ButtonPoseOn(bpy.types.Operator):
 
 
 class ButtonSkinOff(bpy.types.Operator):
-    bl_label = 'Skin Editor'
+    bl_label = '皮肤编辑器'
     bl_idname = 'mbast.button_skin_off'
-    bl_description = 'Close skin editor panel'
+    bl_description = '关闭皮肤编辑器面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -888,9 +888,9 @@ class ButtonSkinOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonSkinOn(bpy.types.Operator):
-    bl_label = 'Skin Editor'
+    bl_label = '皮肤编辑器'
     bl_idname = 'mbast.button_skin_on'
-    bl_description = 'Open skin editor panel'
+    bl_description = '打开皮肤编辑器面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -900,9 +900,9 @@ class ButtonSkinOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonViewOptOff(bpy.types.Operator):
-    bl_label = 'Display Options'
+    bl_label = '显示选项'
     bl_idname = 'mbast.button_display_off'
-    bl_description = 'Close skin editor panel'
+    bl_description = '关闭显示选项面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -912,9 +912,9 @@ class ButtonViewOptOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonViewOptOn(bpy.types.Operator):
-    bl_label = 'Display Options'
+    bl_label = '显示选项'
     bl_idname = 'mbast.button_display_on'
-    bl_description = 'Open skin editor panel'
+    bl_description = '打开显示选项面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -926,9 +926,9 @@ class ButtonViewOptOn(bpy.types.Operator):
 
 
 class ButtonProxyFitOff(bpy.types.Operator):
-    bl_label = 'PROXY FITTING'
+    bl_label = '代理配件'
     bl_idname = 'mbast.button_proxy_fit_off'
-    bl_description = 'Close proxy panel'
+    bl_description = '关闭代理面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -938,9 +938,9 @@ class ButtonProxyFitOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonProxyFitOn(bpy.types.Operator):
-    bl_label = 'PROXY FITTING'
+    bl_label = '代理配件'
     bl_idname = 'mbast.button_proxy_fit_on'
-    bl_description = 'Open proxy panel'
+    bl_description = '打开代理面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -951,9 +951,9 @@ class ButtonProxyFitOn(bpy.types.Operator):
 
 
 class ButtonFilesOff(bpy.types.Operator):
-    bl_label = 'File Tools'
+    bl_label = '文件工具'
     bl_idname = 'mbast.button_file_off'
-    bl_description = 'Close file panel'
+    bl_description = '关闭文件面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -963,9 +963,9 @@ class ButtonFilesOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonFilesOn(bpy.types.Operator):
-    bl_label = 'File Tools'
+    bl_label = '文件工具'
     bl_idname = 'mbast.button_file_on'
-    bl_description = 'Open file panel'
+    bl_description = '打开文件面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -976,9 +976,9 @@ class ButtonFilesOn(bpy.types.Operator):
 
 
 class ButtonFinalizeOff(bpy.types.Operator):
-    bl_label = 'Finalize Tools'
+    bl_label = '定型工具'
     bl_idname = 'mbast.button_finalize_off'
-    bl_description = 'Close finalize panel'
+    bl_description = '关闭定型面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -988,9 +988,9 @@ class ButtonFinalizeOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonFinalizeOn(bpy.types.Operator):
-    bl_label = 'Finalize Tools'
+    bl_label = '定型工具'
     bl_idname = 'mbast.button_finalize_on'
-    bl_description = 'Open finalize panel'
+    bl_description = '打开定型面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1000,9 +1000,9 @@ class ButtonFinalizeOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonLibraryOff(bpy.types.Operator):
-    bl_label = 'Character Library'
+    bl_label = '角色库'
     bl_idname = 'mbast.button_library_off'
-    bl_description = 'Close character library panel'
+    bl_description = '关闭角色库面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1012,9 +1012,9 @@ class ButtonLibraryOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonLibraryOn(bpy.types.Operator):
-    bl_label = 'Character Library'
+    bl_label = '角色库'
     bl_idname = 'mbast.button_library_on'
-    bl_description = 'Open character library panel'
+    bl_description = '打开角色库面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1024,9 +1024,9 @@ class ButtonLibraryOn(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonFinalizedCorrectRot(bpy.types.Operator):
-    bl_label = 'Adjust the selected bone'
+    bl_label = '调整选定的骨骼'
     bl_idname = 'mbast.button_adjustrotation'
-    bl_description = 'Correct the animation with an offset to the bone angle'
+    bl_description = '使用骨骼角度的偏移来校正动画'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1046,9 +1046,9 @@ class UpdateSkinDisplacement(bpy.types.Operator):
     """
     Calculate and apply the skin displacement
     """
-    bl_label = 'Update displacement'
+    bl_label = '更新替换'
     bl_idname = 'mbast.skindisplace_calculate'
-    bl_description = 'Calculate and apply the skin details using displace modifier'
+    bl_description = '使用替换修改器计算并应用皮肤细节'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1067,9 +1067,9 @@ class DisableSubdivision(bpy.types.Operator):
     """
     Disable subdivision surface
     """
-    bl_label = 'Disable subdivision preview'
+    bl_label = '禁用细分预览'
     bl_idname = 'mbast.subdivision_disable'
-    bl_description = 'Disable subdivision modifier'
+    bl_description = '禁用细分修改器'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1086,9 +1086,9 @@ class EnableSubdivision(bpy.types.Operator):
     """
     Enable subdivision surface
     """
-    bl_label = 'Enable subdivision preview'
+    bl_label = '启用细分预览'
     bl_idname = 'mbast.subdivision_enable'
-    bl_description = 'Enable subdivision preview (Warning: it will slow down the morphing)'
+    bl_description = '启用细分预览（警告：它会减慢变形速度）'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1103,9 +1103,9 @@ class EnableSubdivision(bpy.types.Operator):
 
 class DisableSmooth(bpy.types.Operator):
 
-    bl_label = 'Disable corrective smooth'
+    bl_label = '禁用矫正平滑'
     bl_idname = 'mbast.corrective_disable'
-    bl_description = 'Disable corrective smooth modifier in viewport'
+    bl_description = '在视口中禁用矫正平滑修改器'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1120,9 +1120,9 @@ class DisableSmooth(bpy.types.Operator):
 
 class EnableSmooth(bpy.types.Operator):
 
-    bl_label = 'Enable corrective smooth'
+    bl_label = '启用矫正平滑'
     bl_idname = 'mbast.corrective_enable'
-    bl_description = 'Enable corrective smooth modifier in viewport'
+    bl_description = '在视口中启用矫正平滑修改器'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1139,9 +1139,9 @@ class DisableDisplacement(bpy.types.Operator):
     """
     Disable displacement modifier
     """
-    bl_label = 'Disable displacement preview'
+    bl_label = '禁用位移预览'
     bl_idname = 'mbast.displacement_disable'
-    bl_description = 'Disable displacement modifier'
+    bl_description = '禁用位移修改器'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1158,9 +1158,9 @@ class EnableDisplacement(bpy.types.Operator):
     """
     Enable displacement modifier
     """
-    bl_label = 'Enable displacement preview'
+    bl_label = '启用位移预览'
     bl_idname = 'mbast.displacement_enable'
-    bl_description = 'Enable displacement preview (Warning: it will slow down the morphing)'
+    bl_description = '启用位移预览（警告：它会减慢变形速度）'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1178,14 +1178,14 @@ class FinalizeCharacterAndImages(bpy.types.Operator,ExportHelper):
     """
         Convert the character in a standard Blender model
     """
-    bl_label = 'Finalize with textures and backup'
+    bl_label = '使用纹理定型并备份'
     bl_idname = 'mbast.finalize_character_and_images'
     filename_ext = ".png"
     filter_glob: bpy.props.StringProperty(
         default="*.png",
         options={'HIDDEN'},
         )
-    bl_description = 'Finalize, saving all the textures and converting the parameters in shapekeys. Warning: after the conversion the character will be no longer modifiable using MB-Lab tools'
+    bl_description = '完成，保存所有纹理并在形态键中转换参数。 警告：转换后，使用 ManuelbastioniLAB 工具不再可以修改角色'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1223,9 +1223,9 @@ class FinalizeCharacter(bpy.types.Operator):
     """
     Convert the character in a standard Blender model
     """
-    bl_label = 'Finalize'
+    bl_label = '定型'
     bl_idname = 'mbast.finalize_character'
-    bl_description = 'Finalize converting the parameters in shapekeys. Warning: after the conversion the character will be no longer modifiable using MB-Lab Tools'
+    bl_description = '定型转换形态键中的参数。 警告：转换后，使用 ManuelbastioniLAB 工具不再可以修改角色'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1265,7 +1265,7 @@ class ResetParameters(bpy.types.Operator):
     """
     Reset all morphings.
     """
-    bl_label = 'Reset character'
+    bl_label = '重置角色'
     bl_idname = 'mbast.reset_allproperties'
     bl_description = 'Reset all character parameters'
     bl_context = 'objectmode'
@@ -1327,9 +1327,9 @@ class Reset_category(bpy.types.Operator):
     """
     Reset the parameters for the currently selected category
     """
-    bl_label = 'Reset category'
+    bl_label = '重置类别'
     bl_idname = 'mbast.reset_categoryonly'
-    bl_description = 'Reset the parameters for the current category'
+    bl_description = '重置当前类别的参数'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL','UNDO'}
 
@@ -1424,7 +1424,7 @@ class ExpAllImages(bpy.types.Operator, ExportHelper):
 class ExpCharacter(bpy.types.Operator, ExportHelper):
     """Export parameters for the character"""
     bl_idname = "mbast.export_character"
-    bl_label = "Export character"
+    bl_label = "导出角色"
     filename_ext = ".json"
     filter_glob: bpy.props.StringProperty(
         default="*.json",
@@ -1441,7 +1441,7 @@ class ExpCharacter(bpy.types.Operator, ExportHelper):
 class ExpMeasures(bpy.types.Operator, ExportHelper):
     """Export parameters for the character"""
     bl_idname = "mbast.export_measures"
-    bl_label = "Export measures"
+    bl_label = "导出尺寸"
     filename_ext = ".json"
     filter_glob: bpy.props.StringProperty(
         default="*.json",
@@ -1460,7 +1460,7 @@ class ImpCharacter(bpy.types.Operator, ImportHelper):
     Import parameters for the character
     """
     bl_idname = "mbast.import_character"
-    bl_label = "Import character"
+    bl_label = "导入角色"
     filename_ext = ".json"
     filter_glob: bpy.props.StringProperty(
         default="*.json",
@@ -1479,7 +1479,7 @@ class ImpMeasures(bpy.types.Operator, ImportHelper):
     Import parameters for the character
     """
     bl_idname = "mbast.import_measures"
-    bl_label = "Import measures"
+    bl_label = "导入尺寸"
     filename_ext = ".json"
     filter_glob: bpy.props.StringProperty(
         default="*.json",
@@ -1498,7 +1498,7 @@ class LoadDermImage(bpy.types.Operator, ImportHelper):
 
     """
     bl_idname = "mbast.import_dermal"
-    bl_label = "Load dermal image"
+    bl_label = "加载真皮图像"
     filename_ext = ".png"
     filter_glob: bpy.props.StringProperty(
         default="*.png",
@@ -1517,7 +1517,7 @@ class LoadDispImage(bpy.types.Operator, ImportHelper):
 
     """
     bl_idname = "mbast.import_displacement"
-    bl_label = "Load displacement image"
+    bl_label = "加载位移图像"
     filename_ext = ".png"
     filter_glob: bpy.props.StringProperty(
         default="*.png",
@@ -1531,9 +1531,9 @@ class LoadDispImage(bpy.types.Operator, ImportHelper):
         return {'FINISHED'}
 class FitProxy(bpy.types.Operator):
 
-    bl_label = 'Fit Proxy'
+    bl_label = '适配代理'
     bl_idname = 'mbast.proxy_fit'
-    bl_description = 'Fit the selected proxy to the character'
+    bl_description = '使所选代理适合角色'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1546,9 +1546,9 @@ class FitProxy(bpy.types.Operator):
 
 class RemoveProxy(bpy.types.Operator):
 
-    bl_label = 'Remove fitting'
+    bl_label = '移除配件'
     bl_idname = 'mbast.proxy_removefit'
-    bl_description = 'Remove fitting, so the proxy can be modified and then fitted again'
+    bl_description = '移除配件，以便可以修改代理，然后重新安装'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1562,9 +1562,9 @@ class ApplyMeasures(bpy.types.Operator):
     Fit the character to the measures
     """
 
-    bl_label = 'Update character'
+    bl_label = '更新角色'
     bl_idname = 'mbast.measures_apply'
-    bl_description = 'Fit the character to the measures'
+    bl_description = '使角色适合尺寸'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1579,9 +1579,9 @@ class AutoModelling(bpy.types.Operator):
     Fit the character to the measures
     """
 
-    bl_label = 'Auto modelling'
+    bl_label = '自动建模'
     bl_idname = 'mbast.auto_modelling'
-    bl_description = 'Analyze the mesh form and return a verisimilar human'
+    bl_description = '分析网格形式并返回一个类似的人类'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL','UNDO'}
 
@@ -1595,9 +1595,9 @@ class AutoModellingMix(bpy.types.Operator):
     Fit the character to the measures
     """
 
-    bl_label = 'Averaged auto modelling'
+    bl_label = '平均化自动建模'
     bl_idname = 'mbast.auto_modelling_mix'
-    bl_description = 'Return a verisimilar human with multiple interpolations that make it nearest to average'
+    bl_description = '返回具有多个插值的类似人类，使其最接近平均值'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL','UNDO'}
 
@@ -1609,7 +1609,7 @@ class AutoModellingMix(bpy.types.Operator):
 class SaveRestPose(bpy.types.Operator, ExportHelper):
     """Export pose"""
     bl_idname = "mbast.restpose_save"
-    bl_label = "Save custom rest pose"
+    bl_label = "保存自定义静止姿势"
     filename_ext = ".json"
     filter_glob: bpy.props.StringProperty(
         default="*.json",
@@ -1628,7 +1628,7 @@ class LoadRestPose(bpy.types.Operator, ImportHelper):
     Import parameters for the character
     """
     bl_idname = "mbast.restpose_load"
-    bl_label = "Load custom rest pose"
+    bl_label = "加载自定义静止姿势"
     filename_ext = ".json"
     filter_glob: bpy.props.StringProperty(
         default="*.json",
@@ -1646,7 +1646,7 @@ class LoadRestPose(bpy.types.Operator, ImportHelper):
 class SavePose(bpy.types.Operator, ExportHelper):
     """Export pose"""
     bl_idname = "mbast.pose_save"
-    bl_label = "Save pose"
+    bl_label = "保存姿势"
     filename_ext = ".json"
     filter_glob: bpy.props.StringProperty(
         default="*.json",
@@ -1665,7 +1665,7 @@ class LoadPose(bpy.types.Operator, ImportHelper):
     Import parameters for the character
     """
     bl_idname = "mbast.pose_load"
-    bl_label = "Load pose"
+    bl_label = "加载姿势"
     filename_ext = ".json"
     filter_glob: bpy.props.StringProperty(
         default="*.json",
@@ -1683,9 +1683,9 @@ class ResetPose(bpy.types.Operator):
     Import parameters for the character
     """
     bl_idname = "mbast.pose_reset"
-    bl_label = "Reset pose"
+    bl_label = "重置姿势"
     bl_context = 'objectmode'
-    bl_description = 'Reset the angles of the armature bones'
+    bl_description = '重置骨架的角度'
     bl_options = {'REGISTER', 'INTERNAL','UNDO'}
 
     def execute(self, context):
@@ -1699,9 +1699,9 @@ class LoadBvh(bpy.types.Operator, ImportHelper):
     Import parameters for the character
     """
     bl_idname = "mbast.load_animation"
-    bl_label = "Load animation (bvh)"
+    bl_label = "加载动画 (bvh)"
     filename_ext = ".bvh"
-    bl_description = 'Import the animation from a bvh motion capture file'
+    bl_description = '从 bvh 动作捕捉文件导入动画'
     filter_glob: bpy.props.StringProperty(
         default="*.bvh",
         options={'HIDDEN'},
@@ -1717,8 +1717,8 @@ class LoadBvh(bpy.types.Operator, ImportHelper):
 
 class StartSession(bpy.types.Operator):
     bl_idname = "mbast.init_character"
-    bl_label = "Create character"
-    bl_description = 'Create the character selected above'
+    bl_label = "初始化角色"
+    bl_description = '创建以上选择的角色'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL','UNDO'}
 
@@ -1729,8 +1729,8 @@ class StartSession(bpy.types.Operator):
 
 class LoadTemplate(bpy.types.Operator):
     bl_idname = "mbast.load_base_template"
-    bl_label = "Import template"
-    bl_description = 'Import the humanoid template for proxies reference'
+    bl_label = "导入模板"
+    bl_description = '导入用于代理参考的人形模板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL','UNDO'}
 
@@ -1773,7 +1773,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             #box = self.layout.box()
 
             self.layout.label(text="https://github.com/animate1978/MB-Lab")
-            self.layout.label(text="CREATION TOOLS")
+            self.layout.label(text="创作工具")
             self.layout.prop(scn, 'mblab_character_name')
 
             if mblab_humanoid.is_ik_rig_available(scn.mblab_character_name):
@@ -1789,7 +1789,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 
         if gui_status != "ACTIVE_SESSION":
             self.layout.label(text=" ")
-            self.layout.label(text="AFTER-CREATION TOOLS")
+            self.layout.label(text="创作后的工具")
 
 
             if gui_active_panel_fin != "assets":
@@ -1802,7 +1802,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 box.prop(scn,'mblab_proxy_library')
                 box.prop(scn,'mblab_assets_models')
                 #box.operator('mbast.load_assets_element')
-                box.label(text="To adapt the asset, use the proxy fitting tool", icon = 'INFO')
+                box.label(text="要调整资源，请使用代理配件工具", icon = 'INFO')
 
 
 
@@ -1829,7 +1829,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     box.operator("mbast.load_animation", icon='IMPORT')
                 else:
                     box.enabled = False
-                    box.label(text="Please select the lab character (IK not supported)", icon = 'INFO')
+                    box.label(text="请选择实验室角色（不支持 IK）", icon = 'INFO')
 
             if gui_active_panel_fin != "expressions":
                 self.layout.operator('mbast.button_expressions_on', icon=icon_expand)
@@ -1850,7 +1850,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     box.operator("mbast.reset_expression", icon="RECOVER_LAST")
                 else:
                     box.enabled = False
-                    box.label(text="No express. shapekeys", icon = 'INFO')
+                    box.label(text="没有表情形态键", icon = 'INFO')
 
             if gui_active_panel_fin != "proxy_fit":
                 self.layout.operator('mbast.button_proxy_fit_on', icon=icon_expand)
@@ -1860,30 +1860,30 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 
 
                 box = self.layout.box()
-                box.label(text="PROXY FITTING")
-                box.label(text="Please select character and proxy:")
+                box.label(text="代理配件")
+                box.label(text="请选择角色和代理：")
                 box.prop(scn, 'mblab_fitref_name')
-                box.prop(scn, 'mblab_proxy_name')
+                box.prop(scn, 'mblab_proxy_name')                
                 if fitting_status == "NO_REFERENCE":
                     #box.enabled = False
-                    box.label(text="Character not valid.", icon="ERROR")
-                    box.label(text="Possible reasons:")
-                    box.label(text="- Character created with a different lab version")
-                    box.label(text="- Character topology altered by custom modelling")
-                    box.label(text="- Character topology altered by modifiers (decimator,subsurf, etc..)")
-                if fitting_status == "SAME_OBJECTS":
-                    box.label(text="Proxy and character cannot be the same object", icon="ERROR")
-                if fitting_status == "CHARACTER_NOT_FOUND":
-                    box.label(text="Character not found", icon="ERROR")
-                if fitting_status == "PROXY_NOT_FOUND":
-                    box.label(text="Proxy not found", icon="ERROR")
-                if fitting_status == 'OK':
-                    box.label(text="The proxy is ready for fitting.", icon="INFO")
-                    proxy_compatib = mblab_proxy.validate_assets_compatibility(proxy_obj, reference_obj)
-
+                    box.label(text="角色无效", icon="ERROR")
+                    box.label(text="可能的原因：")
+                    box.label(text="- 角色是用其他版本实验室创建的")
+                    box.label(text="- 自定义建模更改了角色拓扑")                    
+                    box.label(text="- 角色拓扑被修改器改变了(精简,细分,等等..)")
+                if fitting_status == "SAME_OBJECTS":                    
+                    box.label(text="代理和角色不能是同一个对象", icon="ERROR") 
+                if fitting_status == "CHARACTER_NOT_FOUND":                   
+                    box.label(text="找不到角色", icon="ERROR") 
+                if fitting_status == "PROXY_NOT_FOUND":                   
+                    box.label(text="找不到代理", icon="ERROR") 
+                if fitting_status == 'OK':                    
+                    box.label(text="代理已准备就绪。", icon="INFO")
+                    proxy_compatib = mblab_proxy.validate_assets_compatibility(proxy_obj, reference_obj)                    
+                    
                     if proxy_compatib == "WARNING":
-                        box.label(text="The proxy seems not designed for the selected character.", icon="ERROR")
-
+                        box.label(text="代理似乎不是为所选角色设计的。", icon="ERROR")                    
+                    
                     box.prop(scn,'mblab_proxy_offset')
                     box.prop(scn,'mblab_proxy_threshold')
                     box.prop(scn, 'mblab_add_mask_group')
@@ -1892,13 +1892,13 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     box.operator("mbast.proxy_removefit", icon="MOD_CLOTH")
                 if fitting_status == 'WRONG_SELECTION':
                     box.enabled = False
-                    box.label(text="Please select only two objects: humanoid and proxy", icon="INFO")
+                    box.label(text="请只选择两个对象：人形和代理", icon="INFO")
                 if fitting_status == 'NO_REFERENCE_SELECTED':
                     box.enabled = False
-                    box.label(text="No valid humanoid template selected", icon="INFO")
+                    box.label(text="未选择有效的人形模板", icon="INFO")
                 if fitting_status == 'NO_MESH_SELECTED':
                     box.enabled = False
-                    box.label(text="Selected proxy is not a mesh", icon="INFO")
+                    box.label(text="选定的代理不是网格", icon="INFO")
 
             if gui_active_panel_fin != "utilities":
                 self.layout.operator('mbast.button_utilities_on', icon=icon_expand)
@@ -1906,12 +1906,12 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 self.layout.operator('mbast.button_utilities_off', icon=icon_collapse)
 
                 box = self.layout.box()
-                box.label(text="Choose a proxy reference")
+                box.label(text="选择代理参考")
                 box.prop(scn, 'mblab_template_name')
                 box.operator('mbast.load_base_template')
 
                 box = self.layout.box()
-                box.label(text="Bones rot. offset")
+                box.label(text="骨骼旋转偏移")
                 box.operator('mbast.button_adjustrotation', icon='BONE_DATA')
                 mblab_retarget.check_correction_sync()
                 if mblab_retarget.is_animated_bone == "VALID_BONE":
@@ -1930,21 +1930,21 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 #box = self.layout.box()
 
                 if mblab_humanoid.exists_transform_database():
-                    self.layout.label(text="CREATION TOOLS")
+                    self.layout.label(text="创作工具")
                     x_age = getattr(obj,'character_age',0)
                     x_mass = getattr(obj,'character_mass',0)
                     x_tone = getattr(obj,'character_tone',0)
                     age_lbl = round((15.5*x_age**2)+31*x_age+33)
                     mass_lbl = round(50*(x_mass+1))
                     tone_lbl = round(50*(x_tone+1))
-                    lbl_text = "Age: {0}y  Mass: {1}%  Tone: {2}% ".format(age_lbl,mass_lbl,tone_lbl)
+                    lbl_text = "年龄：{0}岁  脂肪（质量）：{1}%  肌肉：{2}% ".format(age_lbl,mass_lbl,tone_lbl)
                     self.layout.label(text=lbl_text,icon="RNA")
                     for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
                         if "last" not in meta_data_prop:
                             self.layout.prop(obj, meta_data_prop)
                     self.layout.operator("mbast.reset_allproperties", icon="WORKSPACE")
                     if mblab_humanoid.get_subd_visibility() == True:
-                        self.layout.label(text="Tip: for slow PC, disable the subdivision in Display Options below", icon='INFO')
+                        self.layout.label(text="提示：性能不足的设备，请在下面的“显示选项”中禁用细分", icon='INFO')
 
                 if gui_active_panel != "library":
                     self.layout.operator('mbast.button_library_on', icon=icon_expand)
@@ -1952,7 +1952,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     self.layout.operator('mbast.button_library_off', icon=icon_collapse)
                     box = self.layout.box()
 
-                    box.label(text="Characters library")
+                    box.label(text="角色库")
                     if mblab_humanoid.exists_preset_database():
                         box.prop(obj, "preset")
                     if mblab_humanoid.exists_phenotype_database():
@@ -1971,7 +1971,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         box.prop(scn, "mblab_body_mass")
                         box.prop(scn, "mblab_body_tone")
 
-                    box.label(text="Preserve:")
+                    box.label(text="保留：")
                     box.prop(scn, "mblab_preserve_mass")
                     box.prop(scn, "mblab_preserve_height")
                     box.prop(scn, "mblab_preserve_tone")
@@ -1994,7 +1994,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     split = box.split()
 
                     col = split.column()
-                    col.label(text="PARAMETERS")
+                    col.label(text="参数")
                     col.prop(scn, "morphingCategory")
 
                     for prop in mblab_humanoid.get_properties_in_category(scn.morphingCategory):
@@ -2003,8 +2003,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 
                     if mblab_humanoid.exists_measure_database() and scn.mblab_show_measures:
                         col = split.column()
-                        col.label(text="DIMENSIONS")
-                        col.label(text="Experimental feature", icon = 'ERROR')
+                        col.label(text="尺寸")
+                        col.label(text="实验功能", icon = 'ERROR')
                         col.prop(obj, 'mblab_use_inch')
                         col.prop(scn, 'mblab_measure_filter')
                         col.operator("mbast.measures_apply")
@@ -2012,7 +2012,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         m_unit = "cm"
                         if obj.mblab_use_inch:
                             m_unit = "Inches"
-                        col.label(text="Height: {0} {1}".format(round(getattr(obj, "body_height_Z", 0),3),m_unit))
+                        col.label(text="高度：{0} {1}".format(round(getattr(obj, "body_height_Z", 0),3),m_unit))
                         for measure in sorted(mblab_humanoid.measures.keys()):
                             if measure != "body_height_Z":
                                 if hasattr(obj, measure):
@@ -2023,7 +2023,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         col.operator("mbast.import_measures", icon='IMPORT')
 
                     sub = box.box()
-                    sub.label(text="RESET")
+                    sub.label(text="重置")
                     sub.operator("mbast.reset_categoryonly")
 
                 if mblab_humanoid.exists_measure_database():
@@ -2037,7 +2037,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 else:
                     box = self.layout.box()
                     box.enabled = False
-                    box.label(text="Automodelling not available for this character", icon='INFO')
+                    box.label(text="自动建模不适用于此角色", icon='INFO')
 
                 if mblab_humanoid.exists_rest_poses_database():
                     if gui_active_panel != "rest_pose":
@@ -2048,7 +2048,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 
                         if algorithms.is_IK_armature(armature):
                             box.enabled = False
-                            box.label(text="Rest poses are not available for IK armatures", icon='INFO')
+                            box.label(text="静止姿势不适用于 反向动力学（IK）骨架", icon='INFO')
                         else:
                             box.enabled = True
                             box.prop(armature, "rest_pose")
@@ -2065,11 +2065,11 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     box.enabled = True
                     if scn.render.engine != 'CYCLES' and scn.render.engine != 'BLENDER_EEVEE':
                         box.enabled = False
-                        box.label(text="Skin editor requires Cycles or EEVEE", icon='INFO')
+                        box.label(text="皮肤编辑器需要 Cycles 或 EEVEE", icon='INFO')
 
                     if mblab_humanoid.exists_displace_texture():
                         box.operator("mbast.skindisplace_calculate")
-                        box.label(text="You need to enable subdiv and displ to see the displ in viewport", icon='INFO')
+                        box.label(text="您需要启用 细分预览 和 替换 才能在视口中查看显示", icon='INFO')
 
                     for material_data_prop in sorted(mblab_humanoid.character_material_properties.keys()):
                         box.prop(obj, material_data_prop)
@@ -2079,18 +2079,18 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 
                         if mblab_humanoid.exists_dermal_texture():
                             sub = box.box()
-                            sub.label(text="Dermal texture")
+                            sub.label(text="皮肤纹理")
                             sub.operator("mbast.export_dermimage", icon='EXPORT')
                             sub.operator("mbast.import_dermal", icon='IMPORT')
 
                         if mblab_humanoid.exists_displace_texture():
                             sub = box.box()
-                            sub.label(text="Displacement texture")
+                            sub.label(text="替换纹理")
                             sub.operator("mbast.export_dispimage", icon='EXPORT')
                             sub.operator("mbast.import_displacement", icon='IMPORT')
 
                         sub = box.box()
-                        sub.label(text="Export all images used in skin shader")
+                        sub.label(text="导出皮肤着色器中使用的所有图像")
                         sub.operator("mbast.export_allimages", icon='EXPORT')
 
                 if gui_active_panel != "file":
@@ -2129,18 +2129,18 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                             box.operator("mbast.displacement_disable", icon='X')
                     if mblab_humanoid.get_subd_visibility() == False:
                         box.operator("mbast.subdivision_enable", icon='MOD_SUBSURF')
-                        box.label(text="Subd. preview is very CPU intensive", icon='INFO')
+                        box.label(text="细分预览非常占用 CPU", icon='INFO')
                     else:
                         box.operator("mbast.subdivision_disable", icon='X')
-                        box.label(text="Disable subdivision to increase the performance", icon='ERROR')
+                        box.label(text="禁用细分以提高性能", icon='ERROR')
                     if mblab_humanoid.get_smooth_visibility() == False:
                         box.operator("mbast.corrective_enable", icon='MOD_SMOOTH')
                     else:
                         box.operator("mbast.corrective_disable", icon='X')
 
                 self.layout.label(text=" ")
-                self.layout.label(text="AFTER-CREATION TOOLS")
-                self.layout.label(text="After-creation tools (expressions, poses, ecc..) not available for unfinalized characters", icon="INFO")
+                self.layout.label(text="创作后的工具")
+                self.layout.label(text="后期创作工具（表情，姿势，之类 ..）不适用于未完成的角色", icon="INFO")
 
             else:
                 gui_status = "NEW_SESSION"

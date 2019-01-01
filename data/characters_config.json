@@ -65,10 +65,10 @@
     },    
     "f_ca01":
     {        
-        "description": "Generate a realistic Caucasian female character",
+        "description": "生成一个现实的白人女性角色",
         "template_model": "MBLab_human_female",
         "name":"f_ca01",
-        "label": "Caucasian female (F_CA01)",        
+        "label": "♀ 白人女性 (F_CA01)",        
         "texture_diffuse": "human_female_diffuse.png",
         "texture_specular": "human_female_specular.png",
         "texture_roughness": "human_female_roughness.png",
@@ -91,10 +91,10 @@
     },
     "f_as01":
     {        
-        "description": "Generate a realistic Asian female character",
+        "description": "生成一个现实的亚洲女性角色",
         "template_model": "MBLab_human_female",
         "name":"f_as01",
-        "label": "Asian female (F_AS01)",        
+        "label": "♀ 亚洲女性 (F_AS01)",        
         "texture_diffuse": "human_female_diffuse.png",
         "texture_specular": "human_female_specular.png",
         "texture_roughness": "human_female_roughness.png",
@@ -117,10 +117,10 @@
     },
     "f_af01":
     {        
-        "description": "Generate a realistic Afro female character",
+        "description": "生成一个现实的非洲女性角色",
         "template_model": "MBLab_human_female",
         "name":"f_af01",
-        "label": "Afro female (F_AF01)",        
+        "label": "♀ 非洲女性 (F_AF01)",        
         "texture_diffuse": "human_female_diffuse.png",
         "texture_specular": "human_female_specular.png",
         "texture_roughness": "human_female_roughness.png",
@@ -143,10 +143,10 @@
     },
     "m_ca01":
     {        
-        "description": "Generate a realistic Caucasian male character",
+        "description": "生成一个现实的白人男性角色",
         "template_model": "MBLab_human_male",
         "name":"m_ca01",
-        "label": "Caucasian male (M_CA01)",        
+        "label": "♂ 白人男性 (M_CA01)",        
         "texture_diffuse": "human_male_diffuse.png",
         "texture_specular": "human_male_specular.png",
         "texture_roughness": "human_male_roughness.png",
@@ -169,10 +169,10 @@
     },
     "m_as01":
     {        
-        "description": "Generate a realistic Asian male character",
+        "description": "生成一个现实的亚洲男性角色",
         "template_model": "MBLab_human_male",
         "name":"m_as01",
-        "label": "Asian male (M_AS01)",        
+        "label": "♂ 亚洲男性 (M_AS01)",        
         "texture_diffuse": "human_male_diffuse.png",
         "texture_specular": "human_male_specular.png",
         "texture_roughness": "human_male_roughness.png",
@@ -195,10 +195,10 @@
     },
     "m_af01":
     {        
-        "description": "Generate a realistic Afro male character",
+        "description": "生成一个现实的非洲男性角色",
         "template_model": "MBLab_human_male",
         "name":"m_af01",
-        "label": "Afro male (M_AF01)",        
+        "label": "♂ 非洲男性 (M_AF01)",        
         "texture_diffuse": "human_male_diffuse.png",
         "texture_specular": "human_male_specular.png",
         "texture_roughness": "human_male_roughness.png",
@@ -221,10 +221,10 @@
     },
     "f_an01":
     {        
-        "description": "Generate an anime female in shojo style",
+        "description": "生成一个日漫风格的女性",
         "template_model": "MBLab_anime_female",
         "name":"f_an01",
-        "label": "Anime female (F_AN01)",        
+        "label": "♀ 日漫女性娃娃脸 (F_AN01)",        
         "texture_diffuse": "anime_female_diffuse.png",
         "texture_specular": "",
         "texture_roughness": "",
@@ -250,10 +250,10 @@
     },
     "f_an02":
     {        
-        "description": "Generate an anime female in shojo style",
+        "description": "生成一个日漫风格的女性",
         "template_model": "MBLab_anime_female",
         "name":"f_an02",
-        "label": "Anime female (F_AN02)",        
+        "label": "♀ 日漫女性瓜子脸 (F_AN02)",        
         "texture_diffuse": "anime_female_diffuse.png",
         "texture_specular": "",
         "texture_roughness": "",
@@ -279,10 +279,10 @@
     },
     "f_an03":
     {        
-        "description": "Generate a realistic anime female character",
+        "description": "生成一个写实风格的动漫女性",
         "template_model": "MBLab_human_female",
         "name":"f_an03",
-        "label": "Realistic anime female (F_AN03)",        
+        "label": "♀ 写实动漫女性 (F_AN03)",        
         "texture_diffuse": "human_female_diffuse.png",
         "texture_specular": "human_female_specular.png",
         "texture_roughness": "human_female_roughness.png",
@@ -305,10 +305,10 @@
     },
     "m_an01":
     {        
-        "description": "Generate an anime male in shojo style",
+        "description": "生成一个日漫风格的男性",
         "template_model": "MBLab_anime_male",
         "name":"m_an01",
-        "label": "Anime male (M_AN01)",        
+        "label": "♂ 日漫男性娃娃脸 (M_AN01)",        
         "texture_diffuse": "anime_male_diffuse.png",
         "texture_specular": "",
         "texture_roughness": "",
@@ -334,10 +334,10 @@
     },
     "m_an02":
     {        
-        "description": "Generate an anime male in shojo style",
+        "description": "生成一个日漫风格的男性",
         "template_model": "MBLab_anime_male",
         "name":"m_an02",
-        "label": "Anime male (M_AN02)",        
+        "label": "♂ 日漫男性瓜子脸 (M_AN02)",        
         "texture_diffuse": "anime_male_diffuse.png",
         "texture_specular": "",
         "texture_roughness": "",
@@ -363,10 +363,10 @@
     },
     "m_an03":
     {        
-        "description": "Generate a realistic anime male character",
+        "description": "生成一个写实风格的动漫男性",
         "template_model": "MBLab_human_male",
         "name":"m_an03",
-        "label": "Realistic anime male (M_AN03)",        
+        "label": "♂ 写实动漫男性 (M_AN03)",        
         "texture_diffuse": "human_male_diffuse.png",
         "texture_specular": "human_male_specular.png",
         "texture_roughness": "human_male_roughness.png",
@@ -389,10 +389,10 @@
     },
     "f_ft01":
     {        
-        "description": "Generate a realistic anime female character",
+        "description": "生成写实风格的精灵女性角色",
         "template_model": "MBLab_human_female",
         "name":"f_ft01",
-        "label": "Female elf (F_ft01)",        
+        "label": "♀ 女性精灵 (F_ft01)",        
         "texture_diffuse": "human_female_diffuse.png",
         "texture_specular": "human_female_specular.png",
         "texture_roughness": "human_female_roughness.png",
@@ -415,10 +415,10 @@
     },
     "m_ft01":
     {        
-        "description": "Generate a realistic anime male character",
+        "description": "生成写实风格的精灵男性角色",
         "template_model": "MBLab_human_male",
         "name":"m_ft01",
-        "label": "Male elf (M_ft01)",        
+        "label": "♂ 男性精灵 (M_ft01)",        
         "texture_diffuse": "human_male_diffuse.png",
         "texture_specular": "human_male_specular.png",
         "texture_roughness": "human_male_roughness.png",
@@ -441,10 +441,10 @@
     },
     "m_ft02":
     {        
-        "description": "Generate a realistic anime male character",
+        "description": "生成写实风格的男性矮人角色",
         "template_model": "MBLab_human_male",
         "name":"m_ft02",
-        "label": "Male dwarf (M_ft02)",        
+        "label": "♂ 男性矮人 (M_ft02)",        
         "texture_diffuse": "human_male_diffuse.png",
         "texture_specular": "human_male_specular.png",
         "texture_roughness": "human_male_roughness.png",
