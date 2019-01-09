@@ -441,7 +441,7 @@ def get_proxy_items(self, context):
             if algorithms.get_template_model(obj) == None:
                 items.append((obj.name,obj.name,obj.name))
     if len(items) == 0:
-        items = [("NO_PROXY_FOUND","找不到代理","找不到代理")]
+        items = [("NO_PROXY_FOUND","找不到替代物","找不到替代物")]
     return items
 
 
@@ -473,7 +473,7 @@ bpy.types.Scene.mblab_fitref_name = bpy.props.EnumProperty(
 
 bpy.types.Scene.mblab_proxy_name = bpy.props.EnumProperty(
         items=get_proxy_items,
-        name="代理")
+        name="替代物")
 
 
 bpy.types.Scene.mblab_final_prefix = bpy.props.StringProperty(
@@ -585,8 +585,8 @@ bpy.types.Scene.mblab_assets_models = bpy.props.EnumProperty(
 
 
 bpy.types.Scene.mblab_transfer_proxy_weights = bpy.props.BoolProperty(
-    name="从身体到代理转移权重（替换现有）",
-    description="如果代理已经装配了权重，它们将被替换为从角色主体投射的权重",
+    name="从身体到替代物转移权重（替换现有）",
+    description="如果替代物已经装配了权重，它们将被替换为从角色主体投射的权重",
     default = True)
 
 bpy.types.Scene.mblab_save_images_and_backup = bpy.props.BoolProperty(
@@ -614,7 +614,7 @@ bpy.types.Scene.mblab_show_texture_load_save = bpy.props.BoolProperty(
 
 bpy.types.Scene.mblab_add_mask_group = bpy.props.BoolProperty(
     name="添加蒙版顶点组",
-    description="创建一个新的顶点组并使用它作为代理下的身体蒙版。",
+    description="创建一个新的顶点组并使用它作为替代物下的身体蒙版。",
     default=False)
 
 bpy.types.Scene.mblab_preserve_mass = bpy.props.BoolProperty(
@@ -926,9 +926,9 @@ class ButtonViewOptOn(bpy.types.Operator):
 
 
 class ButtonProxyFitOff(bpy.types.Operator):
-    bl_label = '代理配件'
+    bl_label = '替代物配件'
     bl_idname = 'mbast.button_proxy_fit_off'
-    bl_description = '关闭代理面板'
+    bl_description = '关闭替代物面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -938,9 +938,9 @@ class ButtonProxyFitOff(bpy.types.Operator):
         return {'FINISHED'}
 
 class ButtonProxyFitOn(bpy.types.Operator):
-    bl_label = '代理配件'
+    bl_label = '替代物配件'
     bl_idname = 'mbast.button_proxy_fit_on'
-    bl_description = '打开代理面板'
+    bl_description = '打开替代物面板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1531,9 +1531,9 @@ class LoadDispImage(bpy.types.Operator, ImportHelper):
         return {'FINISHED'}
 class FitProxy(bpy.types.Operator):
 
-    bl_label = '适配代理'
+    bl_label = '适配替代物'
     bl_idname = 'mbast.proxy_fit'
-    bl_description = '使所选代理适合角色'
+    bl_description = '使所选替代物适合角色'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1548,7 +1548,7 @@ class RemoveProxy(bpy.types.Operator):
 
     bl_label = '移除配件'
     bl_idname = 'mbast.proxy_removefit'
-    bl_description = '移除配件，以便可以修改代理，然后重新安装'
+    bl_description = '移除配件，以便可以修改替代物，然后重新安装'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1730,7 +1730,7 @@ class StartSession(bpy.types.Operator):
 class LoadTemplate(bpy.types.Operator):
     bl_idname = "mbast.load_base_template"
     bl_label = "导入模板"
-    bl_description = '导入用于代理参考的人形模板'
+    bl_description = '导入用于替代物参考的人形模板'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL','UNDO'}
 
@@ -1802,7 +1802,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 box.prop(scn,'mblab_proxy_library')
                 box.prop(scn,'mblab_assets_models')
                 #box.operator('mbast.load_assets_element')
-                box.label(text="要调整资源，请使用代理配件工具", icon = 'INFO')
+                box.label(text="要调整资源，请使用替代物配件工具", icon = 'INFO')
 
 
 
@@ -1860,8 +1860,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
 
 
                 box = self.layout.box()
-                box.label(text="代理配件")
-                box.label(text="请选择角色和代理：")
+                box.label(text="替代物配件")
+                box.label(text="请选择角色和替代物：")
                 box.prop(scn, 'mblab_fitref_name')
                 box.prop(scn, 'mblab_proxy_name')                
                 if fitting_status == "NO_REFERENCE":
@@ -1872,17 +1872,17 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     box.label(text="- 自定义建模更改了角色拓扑")                    
                     box.label(text="- 角色拓扑被修改器改变了(精简,细分,等等..)")
                 if fitting_status == "SAME_OBJECTS":                    
-                    box.label(text="代理和角色不能是同一个对象", icon="ERROR") 
+                    box.label(text="替代物和角色不能是同一个对象", icon="ERROR") 
                 if fitting_status == "CHARACTER_NOT_FOUND":                   
                     box.label(text="找不到角色", icon="ERROR") 
                 if fitting_status == "PROXY_NOT_FOUND":                   
-                    box.label(text="找不到代理", icon="ERROR") 
+                    box.label(text="找不到替代物", icon="ERROR") 
                 if fitting_status == 'OK':                    
-                    box.label(text="代理已准备就绪。", icon="INFO")
+                    box.label(text="替代物已准备就绪。", icon="INFO")
                     proxy_compatib = mblab_proxy.validate_assets_compatibility(proxy_obj, reference_obj)                    
                     
                     if proxy_compatib == "WARNING":
-                        box.label(text="代理似乎不是为所选角色设计的。", icon="ERROR")                    
+                        box.label(text="替代物似乎不是为所选角色设计的。", icon="ERROR")                    
                     
                     box.prop(scn,'mblab_proxy_offset')
                     box.prop(scn,'mblab_proxy_threshold')
@@ -1892,13 +1892,13 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     box.operator("mbast.proxy_removefit", icon="MOD_CLOTH")
                 if fitting_status == 'WRONG_SELECTION':
                     box.enabled = False
-                    box.label(text="请只选择两个对象：人形和代理", icon="INFO")
+                    box.label(text="请只选择两个对象：人形和替代物", icon="INFO")
                 if fitting_status == 'NO_REFERENCE_SELECTED':
                     box.enabled = False
                     box.label(text="未选择有效的人形模板", icon="INFO")
                 if fitting_status == 'NO_MESH_SELECTED':
                     box.enabled = False
-                    box.label(text="选定的代理不是网格", icon="INFO")
+                    box.label(text="选定的替代物不是网格", icon="INFO")
 
             if gui_active_panel_fin != "utilities":
                 self.layout.operator('mbast.button_utilities_on', icon=icon_expand)
@@ -1906,7 +1906,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 self.layout.operator('mbast.button_utilities_off', icon=icon_collapse)
 
                 box = self.layout.box()
-                box.label(text="选择代理参考")
+                box.label(text="选择替代物参考")
                 box.prop(scn, 'mblab_template_name')
                 box.operator('mbast.load_base_template')
 
