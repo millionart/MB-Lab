@@ -14,13 +14,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import logging
 import os
 
 import bpy
 import mathutils
 
 from . import algorithms
+from .utils import get_object_parent
+
+logger = logging.getLogger(__name__)
 
 
 class SkeletonEngine:
@@ -61,7 +64,7 @@ class SkeletonEngine:
             self.joints_offset_database = algorithms.load_json_data(joints_offset_data_path, "Joints offset data")
 
             if self.check_skeleton(obj_body):
-                obj_armat = algorithms.get_object_parent(obj_body)
+                obj_armat = get_object_parent(obj_body)
             else:
                 obj_armat = algorithms.import_object_from_lib(
                     self.lib_filepath, self.skeleton_template_name, skeleton_name)
@@ -80,7 +83,7 @@ class SkeletonEngine:
 
     @staticmethod
     def check_skeleton(obj_body):
-        obj_parent = algorithms.get_object_parent(obj_body)
+        obj_parent = get_object_parent(obj_body)
         return obj_parent and obj_parent.type == 'ARMATURE'
 
     def add_armature_modifier(self):
@@ -114,10 +117,10 @@ class SkeletonEngine:
 
     @staticmethod
     def error_msg(path):
-        algorithms.print_log_report("ERROR", "找不到数据库文件：{0}".format(algorithms.simple_path(path)))
+        logger.error("找不到数据库文件：%s", algorithms.simple_path(path))
 
     def store_z_axis(self):
-        algorithms.print_log_report("INFO", "导入临时原始骨架以存储 z 轴")
+        logger.info("导入临时原始骨架以存储 z 轴")
         native_armature = algorithms.import_object_from_lib(
             self.lib_filepath, self.skeleton_template_name, "temp_armature")
 
@@ -152,17 +155,16 @@ class SkeletonEngine:
                             if isinstance(vert_data, list):
                                 new_group.add([vert_data[0]], vert_data[1], 'REPLACE')
                             else:
-                                algorithms.print_log_report("INFO", "错误：垂直权重格式错误")
+                                logger.info("错误：垂直权重格式错误")
                         else:
                             if isinstance(vert_data, int):
                                 new_group.add([vert_data], 1.0, 'REPLACE')
                             else:
-                                algorithms.print_log_report("INFO", "错误：顶点组的格式错误")
+                                logger.info("错误：顶点组的格式错误")
 
-                algorithms.print_log_report("INFO", "从 {0} 加载的组".format(algorithms.simple_path(filepath)))
+                logger.info("从 %s 加载的组", algorithms.simple_path(filepath))
             else:
-                algorithms.print_log_report(
-                    "WARNING", "Vgroup file problem {0}".format(algorithms.simple_path(filepath)))
+                logger.warning("Vgroup file problem %s", algorithms.simple_path(filepath))
 
     def get_body(self):
         if self.has_data:
@@ -194,7 +196,7 @@ class SkeletonEngine:
 
         if armat and body:
             algorithms.set_object_visible(armat)
-            algorithms.print_log_report("DEBUG", "正在适合骨架{0}".format(armat.name))
+            logger.debug("正在适配骨架 %s", armat.name)
             armat.data.use_mirror_x = False
             current_active_obj = algorithms.get_active_object()
             algorithms.select_and_change_mode(armat, "EDIT")

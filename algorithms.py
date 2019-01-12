@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import logging
 import itertools
 import random
 import time
@@ -25,10 +25,16 @@ import array
 import mathutils
 import bpy
 
+from .utils import get_object_parent
+
+logger = logging.getLogger(__name__)
+
 DEBUG_LEVEL = 3
 
 
 def print_log_report(level, text_to_write):
+    import warnings
+    warnings.warn("print_log_report deprecated, use python logging", DeprecationWarning)
     l = 0
     levels = {"INFO": 0, "DEBUG": 1, "WARNING": 2, "ERROR": 3, "CRITICAL": 4, }
     if level in levels:
@@ -42,17 +48,17 @@ def is_writeable(filepath):
         with open(filepath, 'w'):
             return True
     except IOError:
-        print("警告：{0} 的写入权限被拒绝".format(filepath))
+        logger.warning("警告：%s 的写入权限被拒绝", filepath)
     return False
 
 
 def get_data_path():
     addon_directory = os.path.dirname(os.path.realpath(__file__))
     data_dir = os.path.join(addon_directory, "data")
-    print_log_report("INFO", "在文件夹 {0} 中查找重新定位数据...".format(simple_path(data_dir)))
+    logger.info("在文件夹 %s 中查找重新定位数据...", simple_path(data_dir))
 
     if not os.path.isdir(data_dir):
-        print_log_report("CRITICAL", "未找到工具数据。请检查您的 Blender 插件目录。")
+        logger.critical("未找到工具数据。请检查您的 Blender 插件目录。")
         return None
 
     return data_dir
@@ -66,7 +72,7 @@ def get_configuration():
         if os.path.isfile(configuration_path):
             return load_json_data(configuration_path, "Characters definition")
 
-    print_log_report("CRITICAL", "找不到配置数据库。请检查您的 Blender 插件目录。")
+    logger.critical("找不到配置数据库。请检查您的 Blender 插件目录。")
     return None
 
 
@@ -75,7 +81,7 @@ def get_blendlibrary_path():
     if data_path:
         return os.path.join(data_path, "humanoid_library.blend")
 
-    print_log_report("CRITICAL", "未找到模型库。请检查您的 Blender 插件目录。")
+    logger.critical("未找到模型库。请检查您的 Blender 插件目录。")
     return None
 
 
@@ -125,10 +131,10 @@ def exists_database(lib_path):
                     if "json" in extension or "bvh" in extension:
                         result = True
                     else:
-                        print_log_report("WARNING", "{0} 中的未知文件扩展名".format(simple_path(lib_path)))
+                        logger.warning("%s 中的未知文件扩展名", simple_path(lib_path))
 
         else:
-            print_log_report("WARNING", "未找到数据路径 {0}".format(simple_path(lib_path)))
+            logger.warning("未找到数据路径 %s", simple_path(lib_path))
     return result
 
 
@@ -158,8 +164,8 @@ def bounding_box(verts_coo, indices, roundness=4):
             val_y.append(verts_coo[idx][1])
             val_z.append(verts_coo[idx][2])
         else:
-            print_log_report("WARNING", "计算边界框时出错：索引 {0} 不在 verts_coo 中 (len(verts_coo) = {1})".format(
-                idx, len(verts_coo)))
+            logger.warning("计算边界框时出错：索引 %s 不在 verts_coo 中 (len(verts_coo) = %s))",
+                           idx, len(verts_coo))
             return None
 
     box_x = round(max(val_x)-min(val_x), roundness)
@@ -353,8 +359,8 @@ def correct_morph(base_form, current_form, morph_deltas, bboxes):
                     new_morph_deltas.append([idx, newd])
         else:
             new_morph_deltas.append(d_data)
-            print_log_report("WARNING", "索引 {0} 不在边界框数据库中".format(idx))
-    print_log_report("INFO", "变形已在 {0} 秒内被修正".format(time.time()-time1))
+            logger.warning("索引 %s 不在边界框数据库中", idx)
+    logger.info("变形已在 %s 秒内被修正", time.time()-time1)
     return new_morph_deltas
 
 
@@ -369,7 +375,7 @@ def check_version(m_vers, min_version=(1, 5, 0)):
     mesh_version = mesh_version.replace(' ', '')
     mesh_version = mesh_version.strip("[]()")
     if len(mesh_version) < 5:
-        print_log_report("WARNING", "当前的人形的版本格式错误")
+        logger.warning("当前的人形的版本格式错误")
         return False
 
     mesh_version = (float(mesh_version[0]), float(mesh_version[2]), float(mesh_version[4]))
@@ -380,20 +386,20 @@ def looking_for_humanoid_obj():
     """
     Looking for a mesh that is OK for the lab
     """
-    print_log_report("INFO", "正在寻找人形物体......")
+    logger.info("正在寻找人形物体......")
     if bpy.app.version < (2, 78, 0):
         msg = "对不起，此插件需要官方 Blender 2.78 或 2.79。"
-        print_log_report("WARNING", msg)
+        logger.warning(msg)
         return("ERROR", msg)
 
 #        if bpy.app.version >= (2,80,0):
 #            msg = "Sorry, this version of lab does no work with Blender 2.8"
-#            print_log_report("WARNING",msg)
+#            logger.warning(sg)
 #            return("ERROR",msg)
 
 #       if bpy.app.version > (2,79,0):
 #            msg = "The lab is not designed to work with unstable Blender build {0}".format(str(bpy.app.version))
-#            print_log_report("WARNING",msg)
+#            logger.warning(sg)
         # return("ERROR",msg)
 
     human_obj = None
@@ -408,7 +414,7 @@ def looking_for_humanoid_obj():
 
     if not human_obj:
         msg = "No lab humanoids in the scene"
-        print_log_report("INFO", msg)
+        logger.info(msg)
         return "NO_OBJ", msg
 
     return "FOUND", name
@@ -445,17 +451,17 @@ def load_json_data(json_path, description=None):
         with open(json_path, "r") as j_file:
             j_database = json.load(j_file)
             if not description:
-                print_log_report("INFO", "Json 数据库 {0} 在 {1} 秒内加载".format(
-                    simple_path(json_path), time.time()-time1))
+                logger.info("Json 数据库 %s 在 %s 秒内加载",
+                            simple_path(json_path), time.time()-time1)
             else:
-                print_log_report("INFO", "在 {2} 秒内从 {1} 加载 {0}".format(
-                    description, simple_path(json_path), time.time()-time1))
+                logger.info("%s 已被加载，来自于 %s，在 %s 秒内",
+                            description, simple_path(json_path), time.time()-time1)
             return j_database
     except IOError:
         if simple_path(json_path) != "":
-            print_log_report("WARNING", "找不到文件：{0}".format(simple_path(json_path)))
+            logger.warning("找不到文件：%s", simple_path(json_path))
     except json.JSONDecodeError:
-        print_log_report("WARNING", "json文件中的错误：{0}".format(simple_path(json_path)))
+        logger.warning("json 文件中的错误：%s", simple_path(json_path))
     return None
 
 
@@ -614,12 +620,12 @@ def disable_object_modifiers(obj, types_to_disable=[]):
         modifier_type = modfr.type
         if modifier_type in types_to_disable:
             set_modifier_viewport(modfr, False)
-            print_log_report("INFO", "{1}的修饰符{0}可能会产生不可预测的拟合结果。已经将其禁用".format(
-                modifier_type, obj.name))
+            logger.info("修饰符 %s 属于 %s 可能会产生不可预测的拟合结果。已经将其禁用",
+                        modifier_type, obj.name)
         elif types_to_disable == []:
             set_modifier_viewport(modfr, False)
-            print_log_report("INFO", "{1}的修饰符{0}可能会产生不可预测的拟合结果。已经将其禁用".format(
-                modifier_type, obj.name))
+            logger.info("修饰符 %s 属于 %s 可能会产生不可预测的拟合结果。已经将其禁用",
+                        modifier_type, obj.name)
 
 
 def get_object_modifiers_visibility(obj):
@@ -646,7 +652,7 @@ def get_modifier(obj, modifier_name):
 
 
 def get_modifier_name(modfr):
-    return hasattr(modfr, 'name')
+    return getattr(modfr, 'name')
 
 
 def apply_modifier(obj, modifier):
@@ -656,7 +662,7 @@ def apply_modifier(obj, modifier):
         try:
             bpy.ops.object.modifier_apply(apply_as='DATA', modifier=modifier_name)
         except AttributeError:
-            print_log_report("WARNING", "应用 {0} 时出现问题。 修改器是否已禁用？".format(modifier_name))
+            logger.warning("应用 %s 时出现问题。 修改器是否已禁用？", modifier_name)
 
 
 def move_up_modifier(obj, modifier):
@@ -680,7 +686,7 @@ def remove_modifier(obj, modifier_name):
 
 
 def disable_modifier(modfr):
-    print("Disable ", modfr.name)
+    logger.info("Disable %s", modfr.name)
     for mdf in ('show_viewport', 'show_render', 'show_in_editmode', 'show_on_cage'):
         if hasattr(modfr, mdf):
             setattr(modfr, mdf, False)
@@ -697,7 +703,7 @@ def set_modifier_viewport(modfr, value):
 
 def new_modifier(obj, name, modifier_type, parameters):
     if name in obj.modifiers:
-        print_log_report("INFO", "{1} 中已存在修饰符 {0}".format(modifier_type, obj.name))
+        logger.info("修饰符 %s 已存在于 %s", modifier_type, obj.name)
         return obj.modifiers[name]
     _new_modifier = obj.modifiers.new(name, modifier_type)
     for parameter, value in parameters.items():
@@ -705,7 +711,7 @@ def new_modifier(obj, name, modifier_type, parameters):
             try:
                 setattr(_new_modifier, parameter, value)
             except AttributeError:
-                print_log_report("INFO", "修改器 {1} 的属性“{0}”的赋值失败".format(parameter, name))
+                logger.info("对属性 '%s'，来自修改器 %s 的赋值失败", parameter, name)
     return _new_modifier
 
 
@@ -714,8 +720,7 @@ def set_modifier_parameter(modifier, parameter, value):
         try:
             setattr(modifier, parameter, value)
         except AttributeError:
-            print_log_report("INFO", "修改器 {1} 的属性“{0}”的赋值失败".format(
-                parameter, modifier))
+            logger.info("对属性 '%s'，来自修改器 %s 的赋值失败", parameter, modifier)
 
 
 def get_object_materials(obj):
@@ -732,9 +737,9 @@ def select_and_change_mode(obj, obj_mode):
         set_object_visible(obj)
         try:
             bpy.ops.object.mode_set(mode=obj_mode)
-            print_log_report("DEBUG", "选择并更改 {0} = {1} 的模式".format(obj.name, obj_mode))
+            logger.debug("选择并更改 %s = %s 的模式", obj.name, obj_mode)
         except AttributeError:
-            print_log_report("WARNING", "无法将 {0} 的模式更改为 {1}。".format(obj.name, obj_mode))
+            logger.warning("无法将 %s 的模式更改为 %s。", obj.name, obj_mode)
 
 
 def get_selected_objs_names():
@@ -786,14 +791,6 @@ def get_objects_selected_names():
             selected_objects.append(obj.name)
     return selected_objects
 
-
-def get_deforming_armature(obj):
-    if obj:
-        if obj.type == 'MESH':
-            for modf in obj.modifiers:
-                if modf.type == 'ARMATURE':
-                    return modf.object
-    return None
 
 def apply_object_transformation(obj):
     if obj:
@@ -888,40 +885,6 @@ def get_active_body():
                 obj_id = get_template_model(c_obj)
                 if obj_id:
                     return c_obj
-    return None
-
-
-def is_IK_armature(self, armature=None):
-    if not armature:
-        armature = get_active_armature()
-        if armature:
-            bones = get_bones(armature)
-            for b in bones:
-                if 'IK' in b.name:
-                    return True
-    return False
-
-
-def get_object_parent(obj):
-    if not obj:
-        return None
-    return getattr(obj, "parent", None)
-
-
-def get_active_armature():
-    active_obj = get_active_object()
-    parent_object = get_object_parent(active_obj)
-    if active_obj:
-        if active_obj.type == 'ARMATURE':
-            return active_obj
-        if active_obj.type == 'MESH':
-            if parent_object:
-                if parent_object.type == 'ARMATURE':
-                    return parent_object
-            else:
-                deforming_armature = get_deforming_armature(active_obj)
-                if deforming_armature:
-                    return deforming_armature
     return None
 
 
@@ -1028,7 +991,7 @@ def get_vertgroup_verts(obj, vgroup_name):
 
 def set_object_visible(obj):
     if obj:
-        print_log_report("DEBUG", "将 {0} 的可见性设置为 可见".format(obj.name))
+        logger.debug("将 %s 的可见性设置为 可见", obj.name)
         obj.hide_select = False
 
         # TODO: I don't think this is needed in blender 2.8
@@ -1069,21 +1032,11 @@ def generate_items_list(folderpath, file_type="json"):
 
 def load_image(filepath):
     if os.path.isfile(filepath):
-        print_log_report("INFO", "正在加载图片 {0}". format(os.path.basename(filepath)))
+        logger.info("正在加载图片 %s", os.path.basename(filepath))
         img = bpy.data.images.load(filepath, check_existing=True)
         img.reload()
     else:
-        print_log_report("INFO", "找不到图片 {0}". format(os.path.basename(filepath)))
-
-
-def new_image(name, img_size, color=(0.5, 0.5, 0.5, 1)):
-    print_log_report("INFO", "创建大小为 {1} x {2} 的新图像 {0}". format(name, img_size[0], img_size[1]))
-    if name in bpy.data.images:
-        bpy.data.images.remove(bpy.data.images[name], do_unlink=True)
-        print_log_report("INFO", "先前的现有图像 {0} 已替换为新图像". format(name))
-    new_img = bpy.data.images.new(name, img_size[0], img_size[1])
-    new_img.generated_color = color
-    return new_img
+        logger.info("找不到图片 %s", os.path.basename(filepath))
 
 
 def get_image(name):
@@ -1092,34 +1045,14 @@ def get_image(name):
             # Some check for log
             if bpy.data.images[name].source == "FILE":
                 if os.path.basename(bpy.data.images[name].filepath) != name:
-                    print_log_report("WARNING", "名为 {0} 的图像来自文件：{1}".format(
-                        name, os.path.basename(bpy.data.images[name].filepath)))
+                    logger.warning("名为 %s 的图像来自文件：%s",
+                                   name, os.path.basename(bpy.data.images[name].filepath))
             return bpy.data.images[name]
-        print_log_report("WARNING", "获取图像失败。 在 bpy.data.images 中找不到图像 {0}".format(name))
+        logger.warning("获取图像失败。 在 bpy.data.images 中找不到图像 %s", name)
         return None
 
-    print_log_report("WARNING", "获取图像失败。 图像名称为 {0}".format(name))
+    logger.warning("获取图像失败。 图像名称为 %s", name)
     return None
-
-
-def are_squared_images(image1, image2):
-    out = image1.size[0] == image1.size[1] and image1.size[0] == image2.size[0]
-    if not out:
-        print_log_report("WARNING", "无法使用图像{0}：不是平方". format(image1.name))
-
-    return out
-
-
-def scale_image_to_fit(image1, image2):
-    if are_squared_images(image1, image2):
-        size1_0, size1_1 = image1.size
-        size2_0, size2_1 = image2.size
-        if size1_0 != size2_0:
-            if size1_0 * size1_1 > size2_0 * size2_1:
-                image2.scale(size1_0, size1_1)
-
-            if size1_0 * size1_1 < size2_0 * size2_1:
-                image1.scale(size2_0, size2_1)
 
 
 def save_image(name, filepath, fileformat='PNG'):
@@ -1131,8 +1064,8 @@ def save_image(name, filepath, fileformat='PNG'):
         img.save_render(filepath)
         scn.render.image_settings.file_format = current_format
     else:
-        print_log_report(
-            "WARNING", "无法保存图像 {0}，因为它在 bpy.data.images 中不存在。". format(name))
+        logger.warning(
+            "无法保存图像 %s，因为它在 bpy.data.images 中不存在。", name)
 
 
 def new_texture(name, image=None):
@@ -1157,14 +1090,14 @@ def set_node_image(mat_node, mat_image):
     if mat_node:
         mat_node.image = mat_image
     else:
-        print_log_report("WARNING", "节点分配失败。 找不到图片：{0}".format(mat_image))
+        logger.warning("节点分配失败。 找不到图片：%s", mat_image)
 
 
 def get_material(material_name):
     for material in bpy.data.materials:
         if material.name == material_name:
             return material
-    print_log_report("WARNING", "找不到材质 {0}".format(material_name))
+    logger.warning("找不到材质 %s", material_name)
     return None
 
 
@@ -1172,7 +1105,7 @@ def get_material_nodes(material):
     if material.node_tree:
         return material.node_tree.nodes
 
-    print_log_report("WARNING", "材质 {0} 没有节点".format(material.name))
+    logger.warning("材质 %s 没有节点", material.name)
     return None
 
 
@@ -1183,7 +1116,7 @@ def get_material_node(material_name, node_name):
         if node_name in material.node_tree.nodes:
             material_node = material.node_tree.nodes[node_name]
     if not material_node:
-        print_log_report("WARNING", "未找到节点：素材 {1} 中的 {0}".format(node_name, material_name))
+        logger.warning("未找到节点：%s 在材质 %s 中", node_name, material_name)
     return material_node
 
 
@@ -1192,10 +1125,10 @@ def get_node_output_value(node, index):
         if hasattr(node.outputs[index], "default_value"):
             return node.outputs[index].default_value
 
-        print_log_report("WARNING", "Socket [{0}] 没有 default_value 属性".format(index))
+        logger.warning("Socket [%s] 没有 default_value 属性", index)
         return None
 
-    print_log_report("WARNING", "Socket [{0}] 不在节点 {1} 输出范围内".format(index, node.name))
+    logger.warning("Socket [%s] 不在节点 %s 的输出范围内", index, node.name)
     return None
 
 
@@ -1204,28 +1137,21 @@ def set_node_output_value(node, index, value):
         if hasattr(node.outputs[index], "default_value"):
             node.outputs[index].default_value = value
         else:
-            print_log_report("WARNING", "Socket [{0}] 没有 default_value 属性".format(index))
+            logger.warning("Socket [%s] 没有 default_value 属性", index)
     else:
-        print_log_report("WARNING", "Socket[{0}] 不在节点 {1} 输出范围内".format(index, node.name))
+        logger.warning("Socket [%s] 不在节点 %s 的输出范围内", index, node.name)
 
 
 def get_edit_bones(armature):
     if bpy.context.mode != 'EDIT_ARMATURE':
-        print_log_report("WARNING", "无法获取编辑骨骼，因为 obj 未处于编辑模式")
+        logger.warning("无法获取编辑骨骼，因为物体未处于编辑模式")
         return None
     return armature.data.edit_bones
 
 
-def get_bones(armature):
-    if armature.type != 'ARMATURE':
-        print_log_report("WARNING", "因为 obj 不是骨架，所以无法获得骨骼")
-        return None
-    return armature.data.bones
-
-
 def get_pose_bones(armature):
     if bpy.context.mode != 'POSE':
-        print_log_report("WARNING", "无法获取姿势骨骼，因为 obj 未处于姿势模式")
+        logger.warning("无法获取姿势骨骼，因为物体未处于姿势模式")
         return None
     return armature.pose.bones
 
@@ -1293,8 +1219,8 @@ def set_bone_constraint_parameter(constraint, parameter, value):
         try:
             setattr(constraint, parameter, value)
         except AttributeError:
-            print_log_report("INFO", "对于约束为{1}的属性“{0}”，赋值失败".format(
-                parameter, constraint.name))
+            logger.info("对属性 '%s' 约束为 %s 的赋值失败",
+                        parameter, constraint.name)
 
 
 def get_vertgroup_by_name(obj, group_name):
@@ -1384,7 +1310,7 @@ def update_bendy_bones(armat):
 def link_to_collection(obj):
     # sanity check
     if obj.name not in bpy.data.objects:
-        print_log_report("ERROR", "无法链接 obj {0}，因为它不在 bpy.data.objects 中".format(obj.name))
+        logger.error("无法链接 obj %s，因为它不在 bpy.data.objects 中", obj.name)
         return
 
     collection_name = 'ManuelBastioni_Character'
@@ -1395,7 +1321,7 @@ def link_to_collection(obj):
         if obj.name not in c.objects:
             c.objects.link(obj)
         else:
-            print_log_report("WARNING", "对象 {0} 已链接到场景".format(obj.name))
+            logger.warning("对象 %s 已链接到场景", obj.name)
     else:
         # create the collection, link collection to scene and link obj to collection
         c = bpy.data.collections.new(collection_name)
@@ -1406,26 +1332,26 @@ def link_to_collection(obj):
 def import_object_from_lib(lib_filepath, name, final_name=None, stop_import=True):
     if name != "":
         if stop_import:
-            print_log_report("INFO", "从 {1} 追加对象 {0}".format(name, simple_path(lib_filepath)))
+            logger.info("追加对象 %s 来自 %s", name, simple_path(lib_filepath))
             if name in bpy.data.objects:
-                print_log_report("WARNING", "对象 {0} 已在场景中。导入已停止".format(name))
+                logger.warning("对象 %s 已在场景中。导入已停止", name)
                 return None
 
             if final_name:
                 if final_name in bpy.data.objects:
-                    print_log_report("WARNING", "对象 {0} 已在场景中。导入已停止".format(final_name))
+                    logger.warning("对象 %s 已在场景中。导入已停止", final_name)
                     return None
 
         append_object_from_library(lib_filepath, [name])
         obj = get_object_by_name(name)
         if obj:
-            print_log_report("INFO", "导入对象“{0}”".format(name))
+            logger.info("对象 '%s' 已被导入", name)
             if final_name:
                 obj.name = final_name
-                print_log_report("INFO", "对象“{0}”重命名为“{1}”".format(name, final_name))
+                logger.info("对象 '%s' 已被重命名为 '%s'", name, final_name)
             return obj
 
-        print_log_report("WARNING", "库 {1} 中找不到对象{0}".format(name, simple_path(lib_filepath)))
+        logger.warning("对象 %s 无法在 %s 库中找到", name, simple_path(lib_filepath))
     return None
 
 
@@ -1440,7 +1366,7 @@ def append_object_from_library(lib_filepath, obj_names, suffix=None):
                 names_to_append = obj_names
                 data_to.objects = [name for name in names_to_append if name in data_from.objects]
     except OSError:
-        print_log_report("CRITICAL", "找不到库 {0}".format(lib_filepath))
+        logger.critical("找不到库 %s", lib_filepath)
 
     for obj in data_to.objects:
         link_to_collection(obj)
@@ -1460,7 +1386,7 @@ def append_mesh_from_library(lib_filepath, mesh_names, suffix=None):
                 names_to_append = mesh_names
                 data_to.meshes = [name for name in names_to_append if name in data_from.meshes]
     except OSError:
-        print_log_report("CRITICAL", "找不到库 {0}".format(lib_filepath))
+        logger.critical("找不到库 %s", lib_filepath)
 
 
 def read_object_names_from_library(lib_filepath):
@@ -1469,7 +1395,7 @@ def read_object_names_from_library(lib_filepath):
             for name in data_from.objects:
                 print("OBJ_LIB: ", name)
     except OSError:
-        print_log_report("CRITICAL", "找不到库 {0}".format(lib_filepath))
+        logger.critical("找不到库 %s", lib_filepath)
 
 
 def is_armature_linked(obj, armat):

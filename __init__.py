@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
 
 import time
 import json
@@ -25,8 +26,9 @@ from bpy_extras.io_utils import ExportHelper, ImportHelper
 
 from . import facerig
 from . import humanoid, animationengine, proxyengine
+from . import utils
 
-
+logger = logging.getLogger(__name__)
 
 bl_info = {
     "name": "MB-Lab",
@@ -58,7 +60,7 @@ def start_lab_session():
     global mblab_humanoid
     global gui_status, gui_err_msg
 
-    algorithms.print_log_report("INFO", "Start_the lab session...")
+    logger.info("Start_the lab session...")
     scn = bpy.context.scene
     character_identifier = scn.mblab_character_name
     rigging_type = "base"
@@ -94,7 +96,7 @@ def start_lab_session():
         is_existing = True
 
     if not obj:
-        algorithms.print_log_report("CRITICAL", "Init failed...")
+        logger.critical("Init failed...")
         gui_status = "ERROR_SESSION"
         gui_err_msg = "Init failed. Check the log file"
     else:
@@ -116,7 +118,7 @@ def start_lab_session():
             else:
                 scn.render.engine = 'BLENDER_WORKBENCH'
 
-            algorithms.print_log_report("INFO", "Rendering engine now is {0}".format(scn.render.engine))
+            logger.info("Rendering engine now is %s", scn.render.engine)
             init_morphing_props(mblab_humanoid)
             init_categories_props(mblab_humanoid)
             init_measures_props(mblab_humanoid)
@@ -128,7 +130,7 @@ def start_lab_session():
             mblab_humanoid.update_materials()
 
             if is_existing:
-                algorithms.print_log_report("INFO", "Re-init the character {0}".format(obj.name))
+                logger.info("Re-init the character %s", obj.name)
                 mblab_humanoid.store_mesh_in_cache()
                 mblab_humanoid.reset_mesh()
                 mblab_humanoid.recover_prop_values_from_obj_attr()
@@ -254,7 +256,7 @@ def measure_units_update(self, context):
 def human_expression_update(self, context):
     global mblab_shapekeys
     scn = bpy.context.scene
-    mblab_shapekeys.sync_expression_to_GUI()
+    mblab_shapekeys.sync_expression_to_gui()
 
 
 def restpose_update(self, context):
@@ -268,7 +270,7 @@ def restpose_update(self, context):
 
 def malepose_update(self, context):
     global mblab_retarget
-    armature = algorithms.get_active_armature()
+    armature = utils.get_active_armature()
     filepath = os.path.join(
         mblab_retarget.maleposes_path,
         "".join([armature.male_pose, ".json"]))
@@ -277,7 +279,7 @@ def malepose_update(self, context):
 
 def femalepose_update(self, context):
     global mblab_retarget
-    armature = algorithms.get_active_armature()
+    armature = utils.get_active_armature()
     filepath = os.path.join(
         mblab_retarget.femaleposes_path,
         "".join([armature.female_pose, ".json"]))
@@ -1254,7 +1256,7 @@ class FinalizeCharacterAndImages(bpy.types.Operator, ExportHelper):
 
         mblab_humanoid.correct_expressions(correct_all=True)
 
-        if not algorithms.is_IK_armature(armature):
+        if not utils.is_ik_armature(armature):
             mblab_humanoid.set_rest_pose()
         if scn.mblab_remove_all_modifiers:
             mblab_humanoid.remove_modifiers()
@@ -1294,7 +1296,7 @@ class FinalizeCharacter(bpy.types.Operator):
 
         mblab_humanoid.correct_expressions(correct_all=True)
 
-        if not algorithms.is_IK_armature(armature):
+        if not utils.is_ik_armature(armature):
             mblab_humanoid.set_rest_pose()
         if scn.mblab_remove_all_modifiers:
             mblab_humanoid.remove_modifiers()
@@ -1339,7 +1341,7 @@ class ResetExpressions(bpy.types.Operator):
 
     def execute(self, context):
         global mblab_shapekeys
-        mblab_shapekeys.reset_expressions_GUI()
+        mblab_shapekeys.reset_expressions_gui()
         return {'FINISHED'}
 
 # class LoadAssets(bpy.types.Operator):
@@ -1695,7 +1697,7 @@ class SavePose(bpy.types.Operator, ExportHelper):
 
     def execute(self, context):
         global mblab_humanoid
-        armature = algorithms.get_active_armature()
+        armature = utils.get_active_armature()
         mblab_retarget.save_pose(armature, self.filepath)
         return {'FINISHED'}
 
@@ -1865,8 +1867,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 self.layout.operator('mbast.button_pose_off', icon=icon_collapse)
                 box = self.layout.box()
 
-                armature = algorithms.get_active_armature()
-                if armature is not None and algorithms.is_IK_armature(armature) != True:
+                armature = utils.get_active_armature()
+                if armature is not None and not utils.is_ik_armature(armature):
                     box.enabled = True
                     sel_gender = algorithms.get_selected_gender()
                     if sel_gender == "FEMALE":
@@ -2097,7 +2099,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                         self.layout.operator('mbast.button_rest_pose_off', icon=icon_collapse)
                         box = self.layout.box()
 
-                        if algorithms.is_IK_armature(armature):
+                        if utils.is_ik_armature(armature):
                             box.enabled = False
                             box.label(text="静止姿势不适用于 反向动力学（IK）骨架", icon='INFO')
                         else:
