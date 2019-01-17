@@ -36,7 +36,7 @@ bl_info = {
     "version": (1, 7, 1),
     "blender": (2, 80, 0),
     "location": "View3D > Tools > MB-Lab",
-    "description": "A complete lab for character creation",
+    "description": "一个完整的角色创建实验室",
     "warning": "",
     'wiki_url': "https://github.com/animate1978/MB-Lab/wiki",
     'tracker_url': 'https://github.com/animate1978/MB-Lab/issues',
@@ -96,9 +96,9 @@ def start_lab_session():
         is_existing = True
 
     if not obj:
-        logger.critical("Init failed...")
+        logger.critical("初始化失败...")
         gui_status = "ERROR_SESSION"
-        gui_err_msg = "Init failed. Check the log file"
+        gui_err_msg = "初始化失败。检查日志文件"
     else:
         mblab_humanoid.init_database(obj, character_identifier, rigging_type)
         if mblab_humanoid.has_data:
@@ -118,7 +118,7 @@ def start_lab_session():
             else:
                 scn.render.engine = 'BLENDER_WORKBENCH'
 
-            logger.info("Rendering engine now is %s", scn.render.engine)
+            logger.info("现在渲染引擎是 %s", scn.render.engine)
             init_morphing_props(mblab_humanoid)
             init_categories_props(mblab_humanoid)
             init_measures_props(mblab_humanoid)
@@ -130,7 +130,7 @@ def start_lab_session():
             mblab_humanoid.update_materials()
 
             if is_existing:
-                logger.info("Re-init the character %s", obj.name)
+                logger.info("重新初始化角色 %s", obj.name)
                 mblab_humanoid.store_mesh_in_cache()
                 mblab_humanoid.reset_mesh()
                 mblab_humanoid.recover_prop_values_from_obj_attr()
@@ -511,7 +511,7 @@ bpy.types.Scene.mblab_final_prefix = bpy.props.StringProperty(
         default="")
 
 bpy.types.Scene.mblab_rot_offset_0 = bpy.props.FloatProperty(
-    name="Tweak rot X",
+    name="调整 X 旋转",
     min=-1,
     max=1,
     precision=2,
@@ -519,7 +519,7 @@ bpy.types.Scene.mblab_rot_offset_0 = bpy.props.FloatProperty(
     default=0.0)
 
 bpy.types.Scene.mblab_rot_offset_1 = bpy.props.FloatProperty(
-    name="Tweak rot Y",
+    name="调整 Y 旋转",
     min=-1,
     max=1,
     precision=2,
@@ -527,7 +527,7 @@ bpy.types.Scene.mblab_rot_offset_1 = bpy.props.FloatProperty(
     default=0.0)
 
 bpy.types.Scene.mblab_rot_offset_2 = bpy.props.FloatProperty(
-    name="Tweak rot Z",
+    name="调整 Z 旋转",
     min=-1,
     max=1,
     precision=2,
@@ -535,7 +535,7 @@ bpy.types.Scene.mblab_rot_offset_2 = bpy.props.FloatProperty(
     default=0.0)
 
 bpy.types.Scene.mblab_proxy_offset = bpy.props.FloatProperty(
-    name="Offset",
+    name="偏移",
     min=0,
     max=100,
     default=0)
@@ -584,27 +584,27 @@ bpy.types.Scene.mblab_show_measures = bpy.props.BoolProperty(
     update=modifiers_update)
 
 bpy.types.Scene.mblab_measure_filter = bpy.props.StringProperty(
-    name="Filter",
+    name="过滤",
     default="",
-    description="Filter the measures to show")
+    description="过滤要显示的度量")
 
 bpy.types.Scene.mblab_expression_filter = bpy.props.StringProperty(
-    name="Filter",
+    name="过滤",
     default="",
-    description="Filter the expressions to show")
+    description="过滤要显示的表达式")
 
 bpy.types.Scene.mblab_mix_characters = bpy.props.BoolProperty(
     name="与当前的混合",
-    description="Mix templates")
+    description="混合模板")
 
 bpy.types.Scene.mblab_template_name = bpy.props.EnumProperty(
     items=mblab_humanoid.template_types,
-    name="Select",
+    name="选择",
     default="human_female_base")
 
 bpy.types.Scene.mblab_character_name = bpy.props.EnumProperty(
     items=mblab_humanoid.humanoid_types,
-    name="Select",
+    name="选择",
     default="f_ca01")
 
 bpy.types.Scene.mblab_assets_models = bpy.props.EnumProperty(
@@ -1771,8 +1771,8 @@ class CreateFaceRig(bpy.types.Operator):
 
 class DeleteFaceRig(bpy.types.Operator):
     bl_idname = "mbast.delete_face_rig"
-    bl_label = "Delete Face Rig"
-    bl_description = "Delete the character's face Rig"
+    bl_label = "删除面部绑定"
+    bl_description = "删除角色的面部绑定"
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL', 'UNDO'}
 
@@ -1781,10 +1781,10 @@ class DeleteFaceRig(bpy.types.Operator):
         if mblab_shapekeys.model_type != "NONE":
             if not facerig.delete_face_rig():
                 self.report({'ERROR'},
-                            "Face Rig deletion failed")
+                            "面部绑定删除失败")
         else:
             self.report({'ERROR'},
-                "Select finalized MB Lab character to create face rig")
+                "选择已完成的 MB Lab 角色以创建面部绑定")
         return {'FINISHED'}
 
 class StartSession(bpy.types.Operator):

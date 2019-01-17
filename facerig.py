@@ -57,13 +57,13 @@ def add_rm_drivers(drivers, add=True):
         shape_name = v['data_path'].strip('key_blocks["').strip('"].value')
         idx = bpy.data.objects[mname].data.shape_keys.key_blocks.find(shape_name)
         if idx == -1:
-            logger.critical("%s shape key not found", shape_name)
+            logger.critical("找不到形态建 %s", shape_name)
             continue
         check = bpy.data.objects[mname].data.shape_keys.animation_data and \
             bpy.data.objects[mname].data.shape_keys.animation_data.drivers.\
             find(v['data_path'])
         if check and add:
-            logger.critical("%s shape key already has animation data", shape_name)
+            logger.critical("形态建 %s 已经有动画数据了", shape_name)
             continue
 
         # NOTE: The call to driver_add adds a modifier of type GENERATOR
@@ -75,7 +75,7 @@ def add_rm_drivers(drivers, add=True):
             rc = bpy.data.objects[mname].data.shape_keys.key_blocks[idx].\
                     driver_remove('value')
             if not rc:
-                print("failed to removed: ", shape_name, "idx=", idx)
+                print("删除失败：", shape_name, "idx=", idx)
             continue
 
         # Populate the driver
@@ -97,7 +97,7 @@ def add_rm_drivers(drivers, add=True):
 def setup_face_rig():
     # check if the face rig is already imported
     if bpy.data.objects.find('MBLab_skeleton_face_rig') != -1:
-        logger.critical("MBLab_skeleton_face_rig is already imported")
+        logger.critical("MBLab_skeleton_face_rig 已导入")
         return False
 
     data_path = algorithms.get_data_path()
@@ -105,14 +105,14 @@ def setup_face_rig():
     # Load the face rig
     if not data_path:
         logger.critical(
-            "%s not found. Please check your Blender addons directory. Might need to reinstall ManuelBastioniLab",
+            "%s 未找到。请检查您的 Blender 插件目录。可能需要重新安装 MB-Lab",
             data_path)
         return False
 
     face_rig_blend = os.path.join(data_path, "humanoid_library.blend")
 
     if not os.path.exists(face_rig_blend):
-        logger.critical("%s not found. Might need to reinstall ManuelBastioniLab", face_rig_blend)
+        logger.critical("%s 未找到。可能需要重新安装 MB-Lab", face_rig_blend)
         return False
 
     # append the rig
@@ -128,7 +128,7 @@ def setup_face_rig():
     json_file = os.path.join(data_path, "face_rig", "expression_drivers.json")
 
     if not os.path.exists(json_file):
-        logger.critical("%s not found. Might need to reinstall ManuelBastioniLab", json_file)
+        logger.critical("%s 未找到。可能需要重新安装 MB-Lab", json_file)
         return False
 
     with open(json_file, 'r') as f:
@@ -141,7 +141,7 @@ def delete_face_rig():
     # check if the face rig is already imported
     facerig = bpy.data.objects.get('MBLab_skeleton_face_rig')
     if not facerig:
-        logger.critical("face rig is not added")
+        logger.critical("面部绑定没有被添加")
         return False
 
     data_path = algorithms.get_data_path()
@@ -150,7 +150,7 @@ def delete_face_rig():
     json_file = os.path.join(data_path, "face_rig", "expression_drivers.json")
 
     if not os.path.exists(json_file):
-        logger.critical("%s not found. Might need to reinstall ManuelBastioniLab", json_file)
+        logger.critical("%s 未找到。可能需要重新安装 MB-Lab", json_file)
         return False
 
     with open(json_file, 'r') as f:
