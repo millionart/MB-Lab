@@ -1,6 +1,8 @@
 Modeling Process
 ================
 
+The process of character creation in MB-Lab
+
 =================================
 Creation and after-creation tools
 =================================
@@ -26,16 +28,8 @@ The character is completed in five easy steps:
 
 * Defining the character shape.
 * Defining the skin features
+* Adding clothes/proxies
 * Defining the expression
 * Defining the pose
-* Adding clothes/proxies
 * Saving/exporting the character
-
-.. toctree::
-   :maxdepth: 2
-
-   creation_tools
-   model_types
-   phenotypes
-
 

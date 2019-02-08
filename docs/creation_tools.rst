@@ -26,6 +26,10 @@ The metaparameters are the most intuitive way to define a character. Using this 
 
 The percentage used for tone and mass indicates the variation of these parameters from a minimal amount (0%) to a max amount (100%). So 0% of mass is not intended as a character with no mass, but as a character with the minimal amount of mass required to live.
 
+.. image:: images/gallery_140_14.png
+
+.. image:: images/gallery_140_15.png
+
 The height is not one of the meta parameters, because it's handled separately in the Measure system
 
 Behind these three operators there is a complex algorithm that evaluates in real time tens of body features, using a non-linear computation to simulate the shape of human body in different conditions. As example, the image below shows the overview of the non-linear function used to calculate the effect of the age from 18 to 80 y.o.
@@ -64,6 +68,8 @@ Also the library includes the important database for ethnic phenotypes:
 * Caucasian phenotypes
 
 There are also types and phenotypes for anime characters
+
+.. image:: images/anime_variations01.png
 
 =================
 Detail Parameters
@@ -114,15 +120,7 @@ Five characters created using the extreme engine
 
 .. image:: images/generator03.png
 
-The main feature that makes the quasi-random generator a very powerful modeling tool is that it can be used in combination with the other MB-Lab tools. For example, you can select a phenotype in the first MB-Lab section, then go in the generator, enable the heritage and create many characters from the same family.
-
-.. image:: images/generator04.png
-
-The image above shows five characters created as derivation with heritage from the standard North European.
-
-The result without enabling the heritage option is shown in the image below.
-
-.. image:: images/generator05.png
+The main feature that makes the quasi-random generator a very powerful modeling tool is that it can be used in combination with the other MB-Lab tools.
 
 Other constrains are more intuitive: during the generation it's possible to preserve the mass, the muscles, the height and the face of the characters.
 
@@ -192,3 +190,8 @@ Due to this algorithm, the resulting measures can differ a bit from the user inp
 
 The height of the character can't be assigned directly, but is automatically calculated as sum of neck, torso, buttock, upper leg, lower leg and feet height.
 
+.. toctree::
+   :maxdepth: 2
+
+   model_types
+   phenotypes
