@@ -1,18 +1,24 @@
-# ManuelbastioniLAB - Copyright (C) 2015-2018 Manuel Bastioni
-# Official site: www.manuelbastioni.com
+# MB-Lab
+
 # MB-Lab fork website : https://github.com/animate1978/MB-Lab
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 3
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
 
 
 import logging
@@ -68,7 +74,7 @@ class ProxyEngine:
             proxy_vertices = fit_shapekey.data
         else:
             proxy_vertices = proxy.data.vertices
-            logger.warning("WARNING","在没有拟合的情况下执行重量转移（找不到拟合的形状键）")
+            logger.warning("在没有拟合的情况下执行了重量转移（找不到拟合的形状键）")
 
 
 
@@ -367,7 +373,7 @@ class ProxyEngine:
             template_name = algorithms.get_template_model(body)
             mask_name = "mbastlab_mask_" + proxy.name
 
-            logger.info("INFO","正在过滤替代物 {0}".format(proxy.name))
+            logger.info("正在过滤替代物 {0}".format(proxy.name))
             selected_objs_names = algorithms.get_objects_selected_names()
 
             body_modfs_status = algorithms.get_object_modifiers_visibility(body)

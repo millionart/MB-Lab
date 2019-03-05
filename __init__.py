@@ -1,18 +1,25 @@
-# ManuelbastioniLAB - Copyright (C) 2015-2018 Manuel Bastioni
-# Official site: www.manuelbastioni.com
+# MB-Lab
+
 # MB-Lab fork website : https://github.com/animate1978/MB-Lab
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 3
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
 
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
 
@@ -27,22 +34,25 @@ from bpy_extras.io_utils import ExportHelper, ImportHelper
 from . import facerig
 from . import humanoid, animationengine, proxyengine
 from . import utils
+from . import algorithms
+from . import preferences
+from . import addon_updater_ops
 
 logger = logging.getLogger(__name__)
 
 bl_info = {
     "name": "MB-Lab",
     "author": "Manuel Bastioni",
-    "version": (1, 7, 2),
+    "version": (1, 7, 3),
     "blender": (2, 80, 0),
     "location": "View3D > Tools > MB-Lab",
     "description": "一个完整的角色创建实验室",
-    "warning": "",
-    'wiki_url': "https://github.com/animate1978/MB-Lab/wiki",
+    "warning": "中文版不支持自动更新，请点击下面  [查看文档]  按钮手动下载更新",
+    # 'wiki_url': "https://github.com/animate1978/MB-Lab/wiki",
+    'wiki_url': "https://github.com/millionart/MB-Lab_zh-Hans/archive/master.zip",
     'tracker_url': 'https://github.com/animate1978/MB-Lab/issues',
     "category": "Characters"
 }
-
 
 mblab_humanoid = humanoid.Humanoid(bl_info["version"])
 mblab_retarget = animationengine.RetargetEngine()
@@ -56,7 +66,6 @@ gui_active_panel_fin = None
 
 
 def start_lab_session():
-
     global mblab_humanoid
     global gui_status, gui_err_msg
 
@@ -114,7 +123,7 @@ def start_lab_session():
                     algorithms.import_object_from_lib(lib_filepath, "Lamp_back_up")
                     algorithms.import_object_from_lib(lib_filepath, "Lamp_left")
                     algorithms.import_object_from_lib(lib_filepath, "Lamp_right")
-                    #algorithms.append_object_from_library(lib_filepath, [], "Lamp_")
+                    # algorithms.append_object_from_library(lib_filepath, [], "Lamp_")
             else:
                 scn.render.engine = 'BLENDER_WORKBENCH'
 
@@ -153,7 +162,7 @@ def check_manuelbastionilab_session(dummy):
         gui_status = "NEW_SESSION"
         is_obj = algorithms.looking_for_humanoid_obj()
         if is_obj[0] == "FOUND":
-            #gui_status = "RECOVERY_SESSION"
+            # gui_status = "RECOVERY_SESSION"
             # if scn.do_not_ask_again:
             start_lab_session()
         if is_obj[0] == "ERROR":
@@ -178,11 +187,11 @@ def realtime_update(self, context):
     """
     global mblab_humanoid
     if mblab_humanoid.bodydata_realtime_activated:
-        #time1 = time.time()
+        # time1 = time.time()
         scn = bpy.context.scene
         mblab_humanoid.update_character(category_name=scn.morphingCategory, mode="update_realtime")
         mblab_humanoid.sync_gui_according_measures()
-        #print("realtime_update: {0}".format(time.time()-time1))
+        # print("realtime_update: {0}".format(time.time()-time1))
 
 
 def age_update(self, context):
@@ -417,7 +426,6 @@ def init_metaparameters_props(humanoid_instance):
 
 
 def init_material_parameters_props(humanoid_instance):
-
     for material_data_prop, value in humanoid_instance.character_material_properties.items():
         setattr(
             bpy.types.Object,
@@ -504,7 +512,6 @@ bpy.types.Scene.mblab_proxy_name = bpy.props.EnumProperty(
         items=get_proxy_items,
         name="替代物")
 
-
 bpy.types.Scene.mblab_final_prefix = bpy.props.StringProperty(
         name="前缀",
         description="最终模型，骨架和材质的名称前缀。 如果没有，它将自动生成" ,
@@ -586,7 +593,7 @@ bpy.types.Scene.mblab_show_measures = bpy.props.BoolProperty(
 bpy.types.Scene.mblab_measure_filter = bpy.props.StringProperty(
     name="过滤",
     default="",
-    description="过滤要显示的度量")
+    description="过滤要显示的尺寸")
 
 bpy.types.Scene.mblab_expression_filter = bpy.props.StringProperty(
     name="过滤",
@@ -611,7 +618,6 @@ bpy.types.Scene.mblab_assets_models = bpy.props.EnumProperty(
     items=get_proxy_items_from_library,
     update=load_proxy_item,
     name="资源模型")   
-
 
 bpy.types.Scene.mblab_transfer_proxy_weights = bpy.props.BoolProperty(
     name="从身体到替代物转移权重（替换现有）",
@@ -703,8 +709,7 @@ bpy.types.Scene.mblab_random_engine = bpy.props.EnumProperty(
 
 
 class ButtonParametersOff(bpy.types.Operator):
-
-    bl_label = '身体，面部和尺寸参数'
+    bl_label = '身体尺寸'
     bl_idname = 'mbast.button_parameters_off'
     bl_description = '关闭细节面板'
     bl_context = 'objectmode'
@@ -812,7 +817,6 @@ class ButtonRandomOn(bpy.types.Operator):
 
 
 class ButtonAutomodellingOff(bpy.types.Operator):
-
     bl_label = '自动建模工具'
     bl_idname = 'mbast.button_automodelling_off'
     bl_description = '关闭自动建模面板'
@@ -1126,7 +1130,6 @@ class DisableSubdivision(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-
         global mblab_humanoid
         scn = bpy.context.scene
 
@@ -1146,7 +1149,6 @@ class EnableSubdivision(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-
         global mblab_humanoid
         scn = bpy.context.scene
 
@@ -1156,7 +1158,6 @@ class EnableSubdivision(bpy.types.Operator):
 
 
 class DisableSmooth(bpy.types.Operator):
-
     bl_label = '禁用矫正平滑'
     bl_idname = 'mbast.corrective_disable'
     bl_description = '在视口中禁用矫正平滑修改器'
@@ -1164,7 +1165,6 @@ class DisableSmooth(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-
         global mblab_humanoid
         scn = bpy.context.scene
 
@@ -1174,7 +1174,6 @@ class DisableSmooth(bpy.types.Operator):
 
 
 class EnableSmooth(bpy.types.Operator):
-
     bl_label = '启用矫正平滑'
     bl_idname = 'mbast.corrective_enable'
     bl_description = '在视口中启用矫正平滑修改器'
@@ -1182,7 +1181,6 @@ class EnableSmooth(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-
         global mblab_humanoid
         scn = bpy.context.scene
 
@@ -1202,7 +1200,6 @@ class DisableDisplacement(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-
         global mblab_humanoid
         scn = bpy.context.scene
 
@@ -1222,7 +1219,6 @@ class EnableDisplacement(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
-
         global mblab_humanoid
         scn = bpy.context.scene
 
@@ -1344,20 +1340,21 @@ class ResetExpressions(bpy.types.Operator):
         mblab_shapekeys.reset_expressions_gui()
         return {'FINISHED'}
 
-# class LoadAssets(bpy.types.Operator):
-    # """
-    # Load assets from library
-    # """
-    # bl_label = 'Load model from assets library'
-    # bl_idname = 'mbast.load_assets_element'
-    # bl_description = 'Load the element selected from the assets library'
-    # bl_context = 'objectmode'
-    # bl_options = {'REGISTER', 'INTERNAL','UNDO'}
 
-    # def execute(self, context):
-        # scn = bpy.context.scene
-        # mblab_proxy.load_asset(scn.mblab_assets_models)
-        # return {'FINISHED'}
+# class LoadAssets(bpy.types.Operator):
+# """
+# Load assets from library
+# """
+# bl_label = 'Load model from assets library'
+# bl_idname = 'mbast.load_assets_element'
+# bl_description = 'Load the element selected from the assets library'
+# bl_context = 'objectmode'
+# bl_options = {'REGISTER', 'INTERNAL','UNDO'}
+
+# def execute(self, context):
+# scn = bpy.context.scene
+# mblab_proxy.load_asset(scn.mblab_assets_models)
+# return {'FINISHED'}
 
 
 class InsertExpressionKeyframe(bpy.types.Operator):
@@ -1574,7 +1571,6 @@ class LoadDispImage(bpy.types.Operator, ImportHelper):
 
 
 class FitProxy(bpy.types.Operator):
-
     bl_label = '适配替代物'
     bl_idname = 'mbast.proxy_fit'
     bl_description = '使所选替代物适合角色'
@@ -1583,14 +1579,13 @@ class FitProxy(bpy.types.Operator):
 
     def execute(self, context):
         scn = bpy.context.scene
-        offset = scn.mblab_proxy_offset/1000
-        threshold = scn.mblab_proxy_threshold/1000
+        offset = scn.mblab_proxy_offset / 1000
+        threshold = scn.mblab_proxy_threshold / 1000
         mblab_proxy.fit_proxy_object(offset, threshold, scn.mblab_add_mask_group, scn.mblab_transfer_proxy_weights)
         return {'FINISHED'}
 
 
 class RemoveProxy(bpy.types.Operator):
-
     bl_label = '移除配件'
     bl_idname = 'mbast.proxy_removefit'
     bl_description = '移除配件，以便可以修改替代物，然后重新安装'
@@ -1769,6 +1764,7 @@ class CreateFaceRig(bpy.types.Operator):
                         "选择已完成的MB Lab角色以创建面部绑定")
         return {'FINISHED'}
 
+
 class DeleteFaceRig(bpy.types.Operator):
     bl_idname = "mbast.delete_face_rig"
     bl_label = "删除面部绑定"
@@ -1784,8 +1780,9 @@ class DeleteFaceRig(bpy.types.Operator):
                             "面部绑定删除失败")
         else:
             self.report({'ERROR'},
-                "选择已完成的 MB Lab 角色以创建面部绑定")
+                        "选择已完成的 MB Lab 角色以创建面部绑定")
         return {'FINISHED'}
+
 
 class StartSession(bpy.types.Operator):
     bl_idname = "mbast.init_character"
@@ -1813,17 +1810,17 @@ class LoadTemplate(bpy.types.Operator):
         base_model_name = mblab_humanoid.characters_config[scn.mblab_template_name]["template_model"]
         obj = algorithms.import_object_from_lib(lib_filepath, base_model_name, scn.mblab_template_name)
         if obj:
-            obj["manuellab_proxy_reference"] = mblab_humanoid.characters_config[scn.mblab_template_name]["template_model"]
+            obj["manuellab_proxy_reference"] = mblab_humanoid.characters_config[scn.mblab_template_name][
+                "template_model"]
         return {'FINISHED'}
 
 
 class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
-
     bl_label = "MB-Lab {0}.{1}.{2}".format(bl_info["version"][0], bl_info["version"][1], bl_info["version"][2])
     bl_idname = "OBJECT_PT_characters01"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    #bl_context = 'objectmode'
+    # bl_context = 'objectmode'
     bl_category = "MB-Lab"
 
     @classmethod
@@ -1842,7 +1839,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             box.label(text=gui_err_msg, icon="INFO")
 
         if gui_status == "NEW_SESSION":
-            #box = self.layout.box()
+            # box = self.layout.box()
 
             self.layout.label(text="https://github.com/animate1978/MB-Lab")
             self.layout.label(text="创作工具")
@@ -1871,7 +1868,7 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 self.layout.operator('mbast.button_assets_on', icon=icon_expand)
             else:
                 self.layout.operator('mbast.button_assets_off', icon=icon_collapse)
-                #assets_status = mblab_proxy.validate_assets_fitting()
+                # assets_status = mblab_proxy.validate_assets_fitting()
                 box = self.layout.box()
 
                 box.prop(scn, 'mblab_proxy_library')
@@ -1936,22 +1933,22 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 box.prop(scn, 'mblab_fitref_name')
                 box.prop(scn, 'mblab_proxy_name')                
                 if fitting_status == "NO_REFERENCE":
-                    #box.enabled = False
-                    box.label(text="角色无效", icon="ERROR")
+                    # box.enabled = False
+                    box.label(text="角色无效。", icon="ERROR")
                     box.label(text="可能的原因：")
                     box.label(text="- 角色是用其他版本实验室创建的")
-                    box.label(text="- 自定义建模更改了角色拓扑")                    
+                    box.label(text="- 自定义建模更改了角色拓扑")
                     box.label(text="- 角色拓扑被修改器改变了(精简,细分,等等..)")
-                if fitting_status == "SAME_OBJECTS":                    
-                    box.label(text="替代物和角色不能是同一个对象", icon="ERROR") 
-                if fitting_status == "CHARACTER_NOT_FOUND":                   
-                    box.label(text="找不到角色", icon="ERROR") 
-                if fitting_status == "PROXY_NOT_FOUND":                   
-                    box.label(text="找不到替代物", icon="ERROR") 
-                if fitting_status == 'OK':                    
+                if fitting_status == "SAME_OBJECTS":
+                    box.label(text="替代物和角色不能是同一个对象", icon="ERROR")
+                if fitting_status == "CHARACTER_NOT_FOUND":
+                    box.label(text="找不到角色", icon="ERROR")
+                if fitting_status == "PROXY_NOT_FOUND":
+                    box.label(text="找不到替代物", icon="ERROR")
+                if fitting_status == 'OK':
                     box.label(text="替代物已准备就绪。", icon="INFO")
-                    proxy_compatib = mblab_proxy.validate_assets_compatibility(proxy_obj, reference_obj)                    
-                    
+                    proxy_compatib = mblab_proxy.validate_assets_compatibility(proxy_obj, reference_obj)
+
                     if proxy_compatib == "WARNING":
                         box.label(text="替代物似乎不是为所选角色设计的。", icon="ERROR")                    
                     
@@ -1997,17 +1994,17 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
             obj = mblab_humanoid.get_object()
             armature = mblab_humanoid.get_armature()
             if obj and armature:
-                #box = self.layout.box()
+                # box = self.layout.box()
 
                 if mblab_humanoid.exists_transform_database():
                     self.layout.label(text="创作工具")
                     x_age = getattr(obj, 'character_age', 0)
                     x_mass = getattr(obj, 'character_mass', 0)
                     x_tone = getattr(obj, 'character_tone', 0)
-                    age_lbl = round((15.5*x_age**2)+31*x_age+33)
-                    mass_lbl = round(50*(x_mass+1))
-                    tone_lbl = round(50*(x_tone+1))
-                    lbl_text = "年龄：{0}岁  脂肪（质量）：{1}%  肌肉：{2}% ".format(age_lbl,mass_lbl,tone_lbl)
+                    age_lbl = round((15.5 * x_age ** 2) + 31 * x_age + 33)
+                    mass_lbl = round(50 * (x_mass + 1))
+                    tone_lbl = round(50 * (x_tone + 1))
+                    lbl_text = "年龄：{0}岁  脂肪（质量）：{1}%  肌肉：{2}% ".format(age_lbl, mass_lbl, tone_lbl)
                     self.layout.label(text=lbl_text, icon="RNA")
                     for meta_data_prop in sorted(mblab_humanoid.character_metaproperties.keys()):
                         if "last" not in meta_data_prop:
@@ -2214,7 +2211,8 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 self.layout.label(text=" ")
                 self.layout.label(text="创作后的工具")
                 self.layout.label(
-                    text="后期创作工具（表情，姿势，之类 ..）不适用于未完成的角色", icon="INFO")
+                    text="后期创作工具（表情，姿势，之类 ..）不适用于未完成的角色",
+                    icon="INFO")
 
             else:
                 gui_status = "NEW_SESSION"
@@ -2288,16 +2286,26 @@ classes = (
     CreateFaceRig,
     DeleteFaceRig,
     LoadTemplate,
+    preferences.MBPreferences,
     VIEW3D_PT_tools_ManuelbastioniLAB,
 )
 
-
 def register():
+    # addon updater code and configurations
+    # in case of broken version, try to register the updater first
+    # so that users can revert back to a working version
+    addon_updater_ops.register(bl_info)
+
+    # register the example panel, to show updater buttons
     for cls in classes:
         bpy.utils.register_class(cls)
 
 
 def unregister():
+    # addon updater unregister
+    addon_updater_ops.unregister()
+
+    # register the example panel, to show updater buttons
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
 

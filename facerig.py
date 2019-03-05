@@ -1,18 +1,25 @@
 # MB-Lab
 
 # MB-Lab fork website : https://github.com/animate1978/MB-Lab
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 3
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
 
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
 import json
@@ -117,14 +124,14 @@ def setup_face_rig():
     # Load the face rig
     if not data_path:
         logger.critical(
-            "%s 未找到。请检查您的 Blender 插件目录。可能需要重新安装 MB-Lab",
+            "没有找到 %s。请检查您的 Blender 插件目录。可能需要重新安装 MB-Lab",
             data_path)
         return False
 
     face_rig_blend = os.path.join(data_path, "humanoid_library.blend")
 
     if not os.path.exists(face_rig_blend):
-        logger.critical("%s 未找到。可能需要重新安装 MB-Lab", face_rig_blend)
+        logger.critical("没有找到 %s。可能需要重新安装 MB-Lab", face_rig_blend)
         return False
 
     # append the rig
@@ -140,7 +147,7 @@ def setup_face_rig():
     json_file = os.path.join(data_path, "face_rig", "expression_drivers.json")
 
     if not os.path.exists(json_file):
-        logger.critical("%s 未找到。可能需要重新安装 MB-Lab", json_file)
+        logger.critical("没有找到 %s。可能需要重新安装 MB-Lab", json_file)
         return False
 
     with open(json_file, 'r') as f:
@@ -168,13 +175,13 @@ def delete_face_rig():
     # check if the face rig is already imported
     facerig = bpy.data.objects.get('MBLab_skeleton_face_rig')
     if not facerig:
-        logger.critical("面部绑定没有被添加")
+        logger.critical("由于缺少面部绑定，因此未添加面部绑定")
         return False
 
     # check if the face rig is already imported
     phoneme = bpy.data.objects.get('MBLab_skeleton_phoneme_rig')
     if not phoneme:
-        algorithms.print_log_report("CRITICAL", "face rig is not added")
+        logger.critical("面部绑定没有基于音位添加")
         return False
 
     data_path = algorithms.get_data_path()
@@ -183,7 +190,7 @@ def delete_face_rig():
     json_file = os.path.join(data_path, "face_rig", "expression_drivers.json")
 
     if not os.path.exists(json_file):
-        logger.critical("%s 未找到。可能需要重新安装 MB-Lab", json_file)
+        logger.critical("没有找到 %s。可能需要重新安装 MB-Lab", json_file)
         return False
 
     with open(json_file, 'r') as f:

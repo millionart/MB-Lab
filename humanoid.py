@@ -1,18 +1,24 @@
-# ManuelbastioniLAB - Copyright (C) 2015-2018 Manuel Bastioni
-# Official site: www.manuelbastioni.com
+# MB-Lab
+
 # MB-Lab fork website : https://github.com/animate1978/MB-Lab
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 3
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
 
 
 import logging
@@ -95,7 +101,7 @@ class HumanModifier:
         return self.name < other.name
 
     def __repr__(self):
-        return "Modifier <{0}> with {1} properties: {2}".format(
+        return "具有 {1} 属性的修饰符 <{0}>：{2}".format(
             self.name,
             len(self.properties),
             self.properties)
@@ -144,7 +150,7 @@ class HumanCategory:
         return self.name < other.name
 
     def __repr__(self):
-        return "Category {0} with {1} modfiers".format(
+        return "具有 {1} 修改器的类别 {0}".format(
             self.name,
             len(self.modifiers))
 
@@ -192,9 +198,9 @@ class Humanoid:
 
         self.has_data = False
         self.obj_name = obj.name
-        logger.info("Found the humanoid: {0}".format(character_identifier))
+        logger.info("找到了人形生物：{0}".format(character_identifier))
 
-        logger.info("Init the database...")
+        logger.info("正在初始化数据库......")
 
         self.no_categories = "BasisAsymTest"
         self.categories = {}
@@ -236,7 +242,7 @@ class Humanoid:
         for morph in self.morph_engine.morph_data.keys():
             self.init_character_data(morph)
 
-        logger.info("INFO","Loaded {0} categories from morph database".format(
+        logger.info("从变形数据库加载了 {0} 类别".format(
             len(self.categories)))
         bpy.context.view_layer.objects.active = obj
         self.measures = self.morph_engine.measures
@@ -326,7 +332,7 @@ class Humanoid:
                         modifier.add(prop)
                     self.character_data[prop] = 0.5
             else:
-                logger.warning("WARNING","Wrong name for morph: {0}".format(morph_name))
+                logger.warning("变形名称错误：{0}".format(morph_name))
 
     def reset_category(self, categ):
         time1 = time.time()
@@ -335,7 +341,7 @@ class Humanoid:
         for prop in category.get_all_properties():
             self.character_data[prop] = 0.5
         self.update_character(category_name=category.name, mode = "update_all")
-        logger.info("Category resetted in {0} secs".format(time.time()-time1))
+        logger.info("类别在 {0} 秒被重置".format(time.time()-time1))
 
 
     def exists_measure_database(self):
@@ -413,7 +419,7 @@ class Humanoid:
             self.update_character(mode = "update_directly_verts")
             algorithms.select_and_change_mode(obj,'OBJECT')
 
-            logger.info("Human fitting in {0} secs".format(time.time()-time2))
+            logger.info("人体在 {0} 秒内适配".format(time.time()-time2))
 
     def clean_verts_to_process(self):
         self.morph_engine.verts_to_update.clear()
@@ -456,7 +462,7 @@ class Humanoid:
         filename_root = os.path.splitext(filename)[0]
         new_filename = filename_root + 'backup.json'
         new_filepath = os.path.join(dir_path,new_filename)
-        logger.info("Saving backup character {0}".format(algorithms.simple_path(new_filepath)))
+        logger.info("保存备份角色 {0}".format(algorithms.simple_path(new_filepath)))
         self.save_character(new_filepath, export_proportions=False, export_materials=True, export_metadata = True)
 
 
@@ -504,7 +510,7 @@ class Humanoid:
             if hasattr(obj, material_data_prop):
                 setattr(obj, material_data_prop, value)
             else:
-                logger.warning("material {0}  not found".format(material_data_prop))
+                logger.warning("找不到材质 {0}".format(material_data_prop))
         self.material_realtime_activated = True
 
 
@@ -532,7 +538,7 @@ class Humanoid:
         #if finish_it:
             #self.morph_engine.apply_finishing_morph()
 
-        logger.info("Expression corrected in {0} secs".format(time.time()-time1))
+        logger.info("表达式在 {0} 秒内得到纠正".format(time.time()-time1))
 
 
     def reset_character(self):
@@ -546,7 +552,7 @@ class Humanoid:
         self.update_character(mode = "update_all")
 
 
-        logger.info("Character reset in {0} secs".format(time.time()-time1))
+        logger.info("角色在 {0} 秒被重置".format(time.time()-time1))
 
 
     def reset_metadata(self):
@@ -576,13 +582,13 @@ class Humanoid:
                 setattr(obj, meta_data_prop, value)
             else:
                 if "last" not in meta_data_prop:
-                    logger.error("metadata {0}.{1} not found".format(obj.name,meta_data_prop))
+                    logger.error("元数据 {0}.{1} 找不到".format(obj.name,meta_data_prop))
         self.metadata_realtime_activated = True
 
 
     def delete_all_properties(self):
         time1 = time.time() #TODO: usare obj.keys per lavorare solo sui valory applicati
-        logger.info("INFO","Deleting custom properties")
+        logger.info("删除自定义属性")
         obj = self.get_object()
         props_to_delete = set(["manuellab_vers", "mblab_use_inch","manuellab_rig"])
         for category in self.get_categories():
@@ -606,10 +612,10 @@ class Humanoid:
             try:
                 del obj[prop]
             except:
-                logger.info("Property {0} was not used by this character".format(prop))
+                logger.info("此角色未使用属性 {0}".format(prop))
 
         armat = self.sk_engine.get_armature()
-        logger.info("Properties deleted in {0} secs".format(time.time()-time1))
+        logger.info("属性在 {0} 秒内被删除".format(time.time()-time1))
 
 
     def recover_prop_values_from_obj_attr(self):
@@ -783,10 +789,10 @@ class Humanoid:
 
         self.set_subd_visibility(subdivision_value)
 
-        #logger.error("DEBUG","Character updated in {0} secs".format(time.time()-time1))
+        #logger.error("Character updated in {0} secs".format(time.time()-time1))
 
     def generate_character(self,random_value,prv_face,prv_body,prv_mass,prv_tone,prv_height,prv_phenotype,set_tone_and_mass,body_mass,body_tone,prv_fantasy):
-        logger.info("INFO","正在生成角色...")
+        logger.info("正在生成角色...")
 
         all_props = [x for x in self.character_data.keys()]
         props_to_process = all_props.copy()
@@ -909,7 +915,7 @@ class Humanoid:
             self.update_character(mode = "update_metadata")
 
         else:
-            logger.warning("{0} data not present".format(transformation_id))
+            logger.warning("{0} 数据不存在".format(transformation_id))
 
 
     def init_delta_measures(self):
@@ -945,7 +951,7 @@ class Humanoid:
                             self.delta_measures[delta_name] = [delta1,delta3]
 
 
-        logger.info("INFO","Delta init in {0} secs".format(time.time()-time1))
+        logger.info("Delta init in {0} secs".format(time.time()-time1))
 
 
     def search_best_value(self,m_name,wished_measure,human_modifier,prop):
@@ -1012,7 +1018,7 @@ class Humanoid:
 
 
     def save_character(self, filepath, export_proportions=True, export_materials=True, export_metadata = True):
-        logger.info("INFO","Exporting character to {0}".format(algorithms.simple_path(filepath)))
+        logger.info("Exporting character to {0}".format(algorithms.simple_path(filepath)))
         obj = self.get_object()
         char_data = {"manuellab_vers": self.lab_vers, "structural":dict(), "metaproperties":dict(), "materialproperties":dict()}
 
@@ -1039,7 +1045,7 @@ class Humanoid:
             output_file.close()
 
     def export_measures(self, filepath):
-        logger.info("INFO","Exporting measures to {0}".format(algorithms.simple_path(filepath)))
+        logger.info("Exporting measures to {0}".format(algorithms.simple_path(filepath)))
         obj = self.get_object()
         char_data = {"manuellab_vers": self.lab_vers, "measures":dict()}
         if obj:
@@ -1063,7 +1069,7 @@ class Humanoid:
         else:
             charac_data = data_source
 
-        logger.info("INFO","Loading character from {0}".format(log_msg_type))
+        logger.info("Loading character from {0}".format(log_msg_type))
 
         if "manuellab_vers" in charac_data:
             if not algorithms.check_version(charac_data["manuellab_vers"]):
@@ -1080,7 +1086,7 @@ class Humanoid:
         if "materialproperties" in charac_data:
             material_data = charac_data["materialproperties"]
         else:
-            logger.info("INFO","No material data in  {0}".format(log_msg_type))
+            logger.info("No material data in  {0}".format(log_msg_type))
             material_data = {}
 
         if "metaproperties" in charac_data:
