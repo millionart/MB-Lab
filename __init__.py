@@ -42,8 +42,8 @@ logger = logging.getLogger(__name__)
 
 bl_info = {
     "name": "MB-Lab",
-    "author": "Manuel Bastioni",
-    "version": (1, 7, 3),
+    "author": "Manuel Bastioni, MB-Lab 社区",
+    "version": (1, 7, 4),
     "blender": (2, 80, 0),
     "location": "View3D > Tools > MB-Lab",
     "description": "一个完整的角色创建实验室",
@@ -119,15 +119,15 @@ def start_lab_session():
                 else:
                     scn.render.engine = 'BLENDER_EEVEE'
                 if scn.mblab_use_lamps:
-                    algorithms.import_object_from_lib(lib_filepath, "Lamp_back_bottom")
-                    algorithms.import_object_from_lib(lib_filepath, "Lamp_back_up")
-                    algorithms.import_object_from_lib(lib_filepath, "Lamp_left")
-                    algorithms.import_object_from_lib(lib_filepath, "Lamp_right")
+                    #algorithms.import_object_from_lib(lib_filepath, "Lamp_back_bottom")
+                    algorithms.import_object_from_lib(lib_filepath, "Light_Key")
+                    algorithms.import_object_from_lib(lib_filepath, "Light_Fill")
+                    algorithms.import_object_from_lib(lib_filepath, "Light_Backlight")
                     # algorithms.append_object_from_library(lib_filepath, [], "Lamp_")
             else:
                 scn.render.engine = 'BLENDER_WORKBENCH'
 
-            logger.info("现在渲染引擎是 %s", scn.render.engine)
+            logger.info("当前的渲染引擎是 %s", scn.render.engine)
             init_morphing_props(mblab_humanoid)
             init_categories_props(mblab_humanoid)
             init_measures_props(mblab_humanoid)
@@ -561,12 +561,12 @@ bpy.types.Scene.mblab_use_ik = bpy.props.BoolProperty(
 bpy.types.Scene.mblab_use_muscle = bpy.props.BoolProperty(
     name="使用基本肌肉",
     default=False,
-    description="使用基本肌肉骨架")
+    description="使用基本肌肉骨架。功能有缺陷！！")
 
 bpy.types.Scene.mblab_remove_all_modifiers = bpy.props.BoolProperty(
     name="移除修改器",
     default=False,
-    description="如果选中，将删除所有修改器，除了将从最终角色中移除骨架（位移，细分，矫正平滑等）之外）")
+    description="如果选中，将删除所有修改器，除了将从最终角色中移除骨架（位移，细分，矫正平滑等）之外")
 
 bpy.types.Scene.mblab_use_cycles = bpy.props.BoolProperty(
     name="使用 Cycles 材质（皮肤着色器需要）",
@@ -575,14 +575,14 @@ bpy.types.Scene.mblab_use_cycles = bpy.props.BoolProperty(
     description="为了使用皮肤编辑器和着色器，需要这样做（强烈推荐）")
 
 bpy.types.Scene.mblab_use_eevee = bpy.props.BoolProperty(
-    name="使用 EEVEE 材料（Blender 2.8 皮肤着色器需要）",
+    name="使用 EEVEE 材料",
     default=False,
     update=set_eevee_render_engine,
     description="这是使用皮肤编辑器和着色器所必需的")
 
 bpy.types.Scene.mblab_use_lamps = bpy.props.BoolProperty(
-    name="使用肖像工作室光源（推荐）",
-    default=True,
+    name="使用肖像工作室光源",
+    default=False,
     description="添加一组针对肖像优化的光源。 在皮肤设计中有用（推荐）")
 
 bpy.types.Scene.mblab_show_measures = bpy.props.BoolProperty(
@@ -666,7 +666,7 @@ bpy.types.Scene.mblab_preserve_tone = bpy.props.BoolProperty(
 
 bpy.types.Scene.mblab_preserve_fantasy = bpy.props.BoolProperty(
     name="幻想",
-    description="保留当前的幻想变形量。 例如，从具有零幻想元素的角色开始，所有生成的角色将具有零幻想元素")
+    description="保留当前的幻想变形量。")
 
 bpy.types.Scene.mblab_preserve_body = bpy.props.BoolProperty(
     name="身体",
@@ -1234,11 +1234,8 @@ class FinalizeCharacterAndImages(bpy.types.Operator, ExportHelper):
     bl_label = '使用纹理定型并备份'
     bl_idname = 'mbast.finalize_character_and_images'
     filename_ext = ".png"
-    filter_glob: bpy.props.StringProperty(
-        default="*.png",
-        options={'HIDDEN'},
-        )
-    bl_description = '完成，保存所有纹理并在形态键中转换参数。 警告：转换后，使用 ManuelbastioniLAB 工具不再可以修改角色'
+    filter_glob: bpy.props.StringProperty(default="*.png", options={'HIDDEN'},)
+    bl_description = '完成，保存所有纹理并在形态键中转换参数。 警告：转换后，不再可以使用 MB-Lab 工具修改角色'
     bl_context = 'objectmode'
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1833,75 +1830,43 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
         scn = bpy.context.scene
         icon_expand = "DISCLOSURE_TRI_RIGHT"
         icon_collapse = "DISCLOSURE_TRI_DOWN"
+        
+        box = self.layout.box()
+        box.label(text="https://github.com/animate1978/MB-Lab")
 
         if gui_status == "ERROR_SESSION":
             box = self.layout.box()
             box.label(text=gui_err_msg, icon="INFO")
 
         if gui_status == "NEW_SESSION":
-            # box = self.layout.box()
-
-            self.layout.label(text="https://github.com/animate1978/MB-Lab")
+            
             self.layout.label(text="创作工具")
-            self.layout.prop(scn, 'mblab_character_name')
-
+            box = self.layout.box()
+            box.prop(scn, 'mblab_character_name')
+            
             if mblab_humanoid.is_ik_rig_available(scn.mblab_character_name):
-                self.layout.prop(scn, 'mblab_use_ik')
+                box.prop(scn, 'mblab_use_ik')
             if mblab_humanoid.is_muscle_rig_available(scn.mblab_character_name):
-                self.layout.prop(scn, 'mblab_use_muscle')
+                box.prop(scn, 'mblab_use_muscle')
 
-            self.layout.prop(scn, 'mblab_use_cycles')
-            self.layout.prop(scn, 'mblab_use_eevee')
+            box.prop(scn, 'mblab_use_cycles')
+            box.prop(scn, 'mblab_use_eevee')
             if scn.mblab_use_cycles or scn.mblab_use_eevee:
-                self.layout.prop(scn, 'mblab_use_lamps')
-            self.layout.operator('mbast.init_character')
+                box.prop(scn, 'mblab_use_lamps')
+            box.operator('mbast.init_character', icon='ARMATURE_DATA')
 
         if gui_status != "ACTIVE_SESSION":
             self.layout.label(text=" ")
             self.layout.label(text="创作后的工具")
 
             # face rig button
-            self.layout.operator('mbast.create_face_rig')
-            self.layout.operator('mbast.delete_face_rig')
-
-            if gui_active_panel_fin != "assets":
-                self.layout.operator('mbast.button_assets_on', icon=icon_expand)
-            else:
-                self.layout.operator('mbast.button_assets_off', icon=icon_collapse)
-                # assets_status = mblab_proxy.validate_assets_fitting()
-                box = self.layout.box()
-
-                box.prop(scn, 'mblab_proxy_library')
-                box.prop(scn, 'mblab_assets_models')
-                # box.operator('mbast.load_assets_element')
-                box.label(text="要调整资源，请使用替代物配件工具", icon='INFO')
-
-            if gui_active_panel_fin != "pose":
-                self.layout.operator('mbast.button_pose_on', icon=icon_expand)
-            else:
-                self.layout.operator('mbast.button_pose_off', icon=icon_collapse)
-                box = self.layout.box()
-
-                armature = utils.get_active_armature()
-                if armature is not None and not utils.is_ik_armature(armature):
-                    box.enabled = True
-                    sel_gender = algorithms.get_selected_gender()
-                    if sel_gender == "FEMALE":
-                        if mblab_retarget.femaleposes_exist:
-                            box.prop(armature, "female_pose")
-                    if sel_gender == "MALE":
-                        if mblab_retarget.maleposes_exist:
-                            box.prop(armature, "male_pose")
-                    box.operator("mbast.pose_load", icon='IMPORT')
-                    box.operator("mbast.pose_save", icon='EXPORT')
-                    box.operator("mbast.pose_reset", icon='ARMATURE_DATA')
-                    box.operator("mbast.load_animation", icon='IMPORT')
-                else:
-                    box.enabled = False
-                    box.label(text="请选择实验室角色（不支持 IK）", icon='INFO')
+            box = self.layout.box()
+            box.label(text="面部绑定")
+            box.operator('mbast.create_face_rig')
+            box.operator('mbast.delete_face_rig')
 
             if gui_active_panel_fin != "expressions":
-                self.layout.operator('mbast.button_expressions_on', icon=icon_expand)
+                box.operator('mbast.button_expressions_on', icon=icon_expand)
             else:
                 self.layout.operator('mbast.button_expressions_off', icon=icon_collapse)
                 box = self.layout.box()
@@ -1919,12 +1884,25 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                     box.operator("mbast.reset_expression", icon="RECOVER_LAST")
                 else:
                     box.enabled = False
-                    box.label(text="没有表情形态键", icon='INFO')
-
-            if gui_active_panel_fin != "proxy_fit":
-                self.layout.operator('mbast.button_proxy_fit_on', icon=icon_expand)
+                    box.label(text="没有表达。形态键", icon='INFO')
+                    
+            if gui_active_panel_fin != "assets":
+                box.operator('mbast.button_assets_on', icon=icon_expand)
             else:
-                self.layout.operator('mbast.button_proxy_fit_off', icon=icon_collapse)
+                box.operator('mbast.button_assets_off', icon=icon_collapse)
+                # assets_status = mblab_proxy.validate_assets_fitting()
+                box = self.layout.box()
+
+                box.prop(scn, 'mblab_proxy_library')
+                box.prop(scn, 'mblab_assets_models')
+                # box.operator('mbast.load_assets_element')
+                box.label(text="To adapt the asset, use the proxy fitting tool", icon='INFO')
+
+            
+            if gui_active_panel_fin != "proxy_fit":
+                box.operator('mbast.button_proxy_fit_on', icon=icon_expand)
+            else:
+                box.operator('mbast.button_proxy_fit_off', icon=icon_collapse)
                 fitting_status, proxy_obj, reference_obj = mblab_proxy.get_proxy_fitting_ingredients()
 
                 box = self.layout.box()
@@ -1967,9 +1945,33 @@ class VIEW3D_PT_tools_ManuelbastioniLAB(bpy.types.Panel):
                 if fitting_status == 'NO_MESH_SELECTED':
                     box.enabled = False
                     box.label(text="选定的替代物不是网格", icon="INFO")
+                    
+            if gui_active_panel_fin != "pose":
+                box.operator('mbast.button_pose_on', icon=icon_expand)
+            else:
+                self.layout.operator('mbast.button_pose_off', icon=icon_collapse)
+                box = self.layout.box()
 
+                armature = utils.get_active_armature()
+                if armature is not None and not utils.is_ik_armature(armature):
+                    box.enabled = True
+                    sel_gender = algorithms.get_selected_gender()
+                    if sel_gender == "FEMALE":
+                        if mblab_retarget.femaleposes_exist:
+                            box.prop(armature, "female_pose")
+                    if sel_gender == "MALE":
+                        if mblab_retarget.maleposes_exist:
+                            box.prop(armature, "male_pose")
+                    box.operator("mbast.pose_load", icon='IMPORT')
+                    box.operator("mbast.pose_save", icon='EXPORT')
+                    box.operator("mbast.pose_reset", icon='ARMATURE_DATA')
+                    box.operator("mbast.load_animation", icon='IMPORT')
+                else:
+                    box.enabled = False
+                    box.label(text="Please select the lab character (IK not supported)", icon='INFO')
+                    
             if gui_active_panel_fin != "utilities":
-                self.layout.operator('mbast.button_utilities_on', icon=icon_expand)
+                box.operator('mbast.button_utilities_on', icon=icon_expand)
             else:
                 self.layout.operator('mbast.button_utilities_off', icon=icon_collapse)
 
